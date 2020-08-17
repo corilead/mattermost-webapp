@@ -241,7 +241,7 @@ var config = {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
     performance: {
-        hints: 'warning',
+        hints: false,
     },
     target: 'web',
     plugins: [
