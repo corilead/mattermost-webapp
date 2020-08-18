@@ -30,6 +30,7 @@ function mapStateToProps(state) {
     const enableSignInWithEmail = config.EnableSignInWithEmail === 'true';
     const enableSignInWithUsername = config.EnableSignInWithUsername === 'true';
     const enableSignUpWithEmail = config.EnableSignUpWithEmail === 'true';
+    const enableSignUpWithUaa = config.EnableSignUpWithUaa === 'true';
     const enableSignUpWithGitLab = config.EnableSignUpWithGitLab === 'true';
     const enableSignUpWithGoogle = config.EnableSignUpWithGoogle === 'true';
     const enableSignUpWithOffice365 = config.EnableSignUpWithOffice365 === 'true';
@@ -64,6 +65,7 @@ function mapStateToProps(state) {
         enableSignInWithEmail,
         enableSignInWithUsername,
         enableSignUpWithEmail,
+        enableSignUpWithUaa,
         enableSignUpWithGitLab,
         enableSignUpWithGoogle,
         enableSignUpWithOffice365,

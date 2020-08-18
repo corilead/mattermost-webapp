@@ -50,6 +50,7 @@ class LoginController extends React.PureComponent {
         enableSignInWithEmail: PropTypes.bool.isRequired,
         enableSignInWithUsername: PropTypes.bool.isRequired,
         enableSignUpWithEmail: PropTypes.bool.isRequired,
+        enableSignUpWithUaa: PropTypes.bool.isRequired,
         enableSignUpWithGitLab: PropTypes.bool.isRequired,
         enableSignUpWithGoogle: PropTypes.bool.isRequired,
         enableSignUpWithOffice365: PropTypes.bool.isRequired,
@@ -421,6 +422,7 @@ class LoginController extends React.PureComponent {
 
     checkSignUpEnabled = () => {
         return this.props.enableSignUpWithEmail ||
+            this.props.enableSignUpWithUaa ||
             this.props.enableSignUpWithGitLab ||
             this.props.enableSignUpWithOffice365 ||
             this.props.enableSignUpWithGoogle ||
@@ -534,6 +536,7 @@ class LoginController extends React.PureComponent {
         const loginControls = [];
 
         const ldapEnabled = this.state.ldapEnabled;
+        const uaaSigninEnabled = this.props.enableSignUpWithUaa;
         const gitlabSigninEnabled = this.props.enableSignUpWithGitLab;
         const googleSigninEnabled = this.props.enableSignUpWithGoogle;
         const office365SigninEnabled = this.props.enableSignUpWithOffice365;
@@ -650,7 +653,7 @@ class LoginController extends React.PureComponent {
             );
         }
 
-        if ((emailSigninEnabled || usernameSigninEnabled || ldapEnabled) && (gitlabSigninEnabled || googleSigninEnabled || samlSigninEnabled || office365SigninEnabled)) {
+        if ((emailSigninEnabled || usernameSigninEnabled || ldapEnabled) && (uaaSigninEnabled || gitlabSigninEnabled || googleSigninEnabled || samlSigninEnabled || office365SigninEnabled)) {
             loginControls.push(
                 <div
                     key='divider'
@@ -670,6 +673,26 @@ class LoginController extends React.PureComponent {
                         defaultMessage='Sign in with:'
                     />
                 </h5>,
+            );
+        }
+
+        if (uaaSigninEnabled) {
+            loginControls.push(
+                <a
+                    className='btn btn-custom-login uaa'
+                    key='uaa'
+                    href={Client4.getOAuthRoute() + '/uaa/login' + this.props.location.search}
+                >
+                    <span>
+                        <span className='icon'/>
+                        <span>
+                            <FormattedMessage
+                                id='login.uaa'
+                                defaultMessage='CPLM UAA'
+                            />
+                        </span>
+                    </span>
+                </a>,
             );
         }
 

@@ -261,6 +261,24 @@ exports[`components/SignupController should match snapshot for all signup option
           </span>
         </Link>
         <a
+          className="btn btn-custom-login btn--full uaa"
+          href="/oauth/uaa/signup"
+          key="uaa"
+        >
+          <span>
+            <span
+              className="icon"
+            />
+            <span>
+              <FormattedMessage
+                defaultMessage="Uaa Single Sign-On"
+                id="signup.uaa"
+                values={Object {}}
+              />
+            </span>
+          </span>
+        </a>
+        <a
           className="btn btn-custom-login btn--full gitlab"
           href="/oauth/gitlab/signup"
           key="gitlab"
