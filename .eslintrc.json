@@ -17,8 +17,8 @@
   "settings": {
     "import/resolver": "webpack",
     "react": {
-        "pragma": "React",
-        "version": "16.4"
+      "pragma": "React",
+      "version": "16.4"
     }
   },
   "rules": {
@@ -52,6 +52,10 @@
         ]
       }
     ],
+    "object-curly-spacing": 0,
+    "multiline-ternary": 0,
+    "react/jsx-tag-spacing": 0,
+    "react/jsx-no-literals": 0,
     "react/no-string-refs": 2
   },
   "overrides": [

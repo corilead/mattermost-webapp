@@ -2,6 +2,7 @@
 // See LICENSE.txt for license information.
 /* eslint-disable react/no-string-refs */
 
+import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -25,25 +26,22 @@ import { getTable, formatMarkdownTableMessage, formatGithubCodePaste, isGitHubCo
 import { intlShape } from 'utils/react_intl';
 import * as UserAgent from 'utils/user_agent';
 import * as Utils from 'utils/utils.jsx';
+import './index.css';
 
-import ConfirmModal from 'components/confirm_modal';
 import EditChannelHeaderModal from 'components/edit_channel_header_modal';
 import EditChannelPurposeModal from 'components/edit_channel_purpose_modal';
-import CreatePostModal from 'components/create_post_modal';
 import EmojiPickerOverlay from 'components/emoji_picker/emoji_picker_overlay.jsx';
-import FilePreview from 'components/file_preview';
+import FilePreviewInModal from 'components/file_preview_in_modal';
 import FileUpload from 'components/file_upload';
 import LocalizedIcon from 'components/localized_icon';
 import MsgTyping from 'components/msg_typing';
-import PostDeletedModal from 'components/post_deleted_modal';
 import ResetStatusModal from 'components/reset_status_modal';
 import EmojiIcon from 'components/widgets/icons/emoji_icon';
 import Textbox from 'components/textbox';
 import TextboxLinks from 'components/textbox/textbox_links';
 import TutorialTip from 'components/tutorial/tutorial_tip';
-
-import FormattedMarkdownMessage from 'components/formatted_markdown_message.jsx';
 import MessageSubmitError from 'components/message_submit_error';
+import FormattedMarkdownMessage from 'components/formatted_markdown_message.jsx';
 
 const KeyCodes = Constants.KeyCodes;
 
@@ -58,6 +56,7 @@ function trimRight(str) {
 
 class CreatePost extends React.PureComponent {
     static propTypes = {
+        show: PropTypes.bool,
 
         /**
          *  ref passed from channelView for EmojiPickerOverlay
@@ -886,9 +885,6 @@ class CreatePost extends React.PureComponent {
 
         this.draftsForChannel[channelId] = draft;
         this.props.actions.setDraft(StoragePrefixes.DRAFT + channelId, draft);
-
-        //上传成功文件之后清空原发送消息框的内容
-        this.handleChange({ target: { value: '' } });
     }
 
     handleUploadError = (err, clientId, channelId) => {
@@ -914,6 +910,28 @@ class CreatePost extends React.PureComponent {
         }
 
         this.setState({ serverError });
+    }
+
+    // 更换附件的密级
+    setSecretLevel = (id, value) => {
+        let modifiedDraft = {};
+        const draft = { ...this.props.draft };
+        const channelId = this.props.currentChannel.id;
+        const index = draft.fileInfos.findIndex((info) => info.id === id);
+        if (index > -1) {
+            const newInfos = [...draft.fileInfos];
+            const info = newInfos[index];
+            newInfos.splice(index, 1, { ...info, secretLevel: value });
+            modifiedDraft = {
+                ...draft,
+                fileInfos: newInfos,
+            };
+        }
+
+        this.props.actions.setDraft(StoragePrefixes.DRAFT + channelId, modifiedDraft);
+        this.draftsForChannel[channelId] = modifiedDraft;
+
+        this.handleFileUploadChange();
     }
 
     removePreview = (id) => {
@@ -950,6 +968,32 @@ class CreatePost extends React.PureComponent {
             };
         }
 
+        this.props.actions.setDraft(StoragePrefixes.DRAFT + channelId, modifiedDraft);
+        this.draftsForChannel[channelId] = modifiedDraft;
+
+        this.handleFileUploadChange();
+    }
+
+    // 清空所有附件
+    removeAll = () => {
+        const draft = { ...this.props.draft };
+
+        const channelId = this.props.currentChannel.id;
+
+        this.setState({ serverError: null });
+
+        const uploadsInProgress = draft.uploadsInProgress;
+        uploadsInProgress.forEach((id) => {
+            if (this.refs.fileUpload && this.refs.fileUpload) {
+                this.refs.fileUpload.cancelUpload(id);
+            }
+        });
+
+        const modifiedDraft = {
+            ...draft,
+            fileInfos: [],
+            uploadsInProgress: [],
+        };
         this.props.actions.setDraft(StoragePrefixes.DRAFT + channelId, modifiedDraft);
         this.draftsForChannel[channelId] = modifiedDraft;
 
@@ -1228,107 +1272,8 @@ class CreatePost extends React.PureComponent {
         } = this.props;
         const readOnlyChannel = this.props.readOnlyChannel || !canPost;
         const { formatMessage } = this.props.intl;
-        const { renderScrollbar, channelTimezoneCount, mentions, memberNotifyCount } = this.state;
+        const { renderScrollbar } = this.state;
         const ariaLabelMessageInput = Utils.localizeMessage('accessibility.sections.centerFooter', 'message input complimentary region');
-        let notifyAllMessage = '';
-        let notifyAllTitle = '';
-        if (mentions.includes('@all') || mentions.includes('@channel')) {
-            notifyAllTitle = (
-                <FormattedMessage
-                    id='notify_all.title.confirm'
-                    defaultMessage='Confirm sending notifications to entire channel'
-                />
-            );
-            if (channelTimezoneCount > 0) {
-                notifyAllMessage = (
-                    <FormattedMarkdownMessage
-                        id='notify_all.question_timezone'
-                        defaultMessage='By using **@all** or **@channel** you are about to send notifications to **{totalMembers} people** in **{timezones, number} {timezones, plural, one {timezone} other {timezones}}**. Are you sure you want to do this?'
-                        values={{
-                            totalMembers: memberNotifyCount,
-                            timezones: channelTimezoneCount,
-                        }}
-                    />
-                );
-            } else {
-                notifyAllMessage = (
-                    <FormattedMarkdownMessage
-                        id='notify_all.question'
-                        defaultMessage='By using **@all** or **@channel** you are about to send notifications to **{totalMembers} people**. Are you sure you want to do this?'
-                        values={{
-                            totalMembers: memberNotifyCount,
-                        }}
-                    />
-                );
-            }
-        } else if (mentions.length > 0) {
-            notifyAllTitle = (
-                <FormattedMessage
-                    id='notify_all.title.confirm_groups'
-                    defaultMessage='Confirm sending notifications to groups'
-                />
-            );
-
-            if (mentions.length === 1) {
-                if (channelTimezoneCount > 0) {
-                    notifyAllMessage = (
-                        <FormattedMarkdownMessage
-                            id='notify_all.question_timezone_one_group'
-                            defaultMessage='By using **{mention}** you are about to send notifications to **{totalMembers} people** in **{timezones, number} {timezones, plural, one {timezone} other {timezones}}**. Are you sure you want to do this?'
-                            values={{
-                                mention: mentions[0],
-                                totalMembers: memberNotifyCount,
-                                timezones: channelTimezoneCount,
-                            }}
-                        />
-                    );
-                } else {
-                    notifyAllMessage = (
-                        <FormattedMarkdownMessage
-                            id='notify_all.question_one_group'
-                            defaultMessage='By using **{mention}** you are about to send notifications to **{totalMembers} people**. Are you sure you want to do this?'
-                            values={{
-                                mention: mentions[0],
-                                totalMembers: memberNotifyCount,
-                            }}
-                        />
-                    );
-                }
-            } else if (channelTimezoneCount > 0) {
-                notifyAllMessage = (
-                    <FormattedMarkdownMessage
-                        id='notify_all.question_timezone_groups'
-                        defaultMessage='By using **{mentions}** and **{finalMention}** you are about to send notifications to at least **{totalMembers} people** in **{timezones, number} {timezones, plural, one {timezone} other {timezones}}**. Are you sure you want to do this?'
-                        values={{
-                            mentions: mentions.slice(0, -1).join(', '),
-                            finalMention: mentions[mentions.length - 1],
-                            totalMembers: memberNotifyCount,
-                            timezones: channelTimezoneCount,
-                        }}
-                    />
-                );
-            } else {
-                notifyAllMessage = (
-                    <FormattedMarkdownMessage
-                        id='notify_all.question_groups'
-                        defaultMessage='By using **{mentions}** and **{finalMention}** you are about to send notifications to at least **{totalMembers} people**. Are you sure you want to do this?'
-                        values={{
-                            mentions: mentions.slice(0, -1).join(', '),
-                            finalMention: mentions[mentions.length - 1],
-                            totalMembers: memberNotifyCount,
-                        }}
-                    />
-                );
-            }
-        }
-
-        const notifyAllConfirm = (
-            <FormattedMessage
-                id='notify_all.confirm'
-                defaultMessage='Confirm'
-            />
-        );
-
         let serverError = null;
         if (this.state.serverError) {
             serverError = (
@@ -1348,19 +1293,18 @@ class CreatePost extends React.PureComponent {
         }
 
         let preview = null;
-        let createPostModalVisible = false;
         if (!readOnlyChannel && (draft.fileInfos.length > 0 || draft.uploadsInProgress.length > 0)) {
             preview = (
                 <>
-                    <FilePreview
+                    <FilePreviewInModal
                         fileInfos={draft.fileInfos}
                         onRemove={this.removePreview}
+                        onChangeSecretLevel={this.setSecretLevel}
                         uploadsInProgress={draft.uploadsInProgress}
                         uploadsProgressPercent={this.state.uploadsProgressPercent}
                     />
                 </>
             );
-            createPostModalVisible = true;
         }
 
         let postFooterClassName = 'post-create-footer';
@@ -1454,119 +1398,118 @@ class CreatePost extends React.PureComponent {
         }
 
         return (
-            <>
-                <form
-                    id='create_post'
-                    ref='topDiv'
-                    className={centerClass}
-                    onSubmit={this.handleSubmit}
-                >
-                    <div className={'post-create' + attachmentsDisabled + scrollbarClass}>
-                        <div className='post-create-body'>
+            <Modal
+                dialogClassName='create_post_modal'
+                show={this.props.show}
+            >
+                <Modal.Header>
+                    <Modal.Title>填写文件密级</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='file_preview_modal_body'>
+                    <form
+                        id='create_post'
+                        ref='topDiv'
+                        className={centerClass}
+                        onSubmit={this.handleSubmit}
+                    >
+                        <div className={'post-create' + attachmentsDisabled + scrollbarClass}>
                             <div
-                                role='application'
-                                id='centerChannelFooter'
-                                aria-label={ariaLabelMessageInput}
-                                tabIndex='-1'
-                                className='post-body__cell a11y__region'
-                                data-a11y-sort-order='2'
+                                id='postCreateFooter'
+                                role='form'
+                                className={postFooterClassName}
                             >
-                                <Textbox
-                                    onChange={this.handleChange}
-                                    onKeyPress={this.postMsgKeyPress}
-                                    onKeyDown={this.handleKeyDown}
-                                    onMouseUp={this.handleMouseUpKeyUp}
-                                    onKeyUp={this.handleMouseUpKeyUp}
-                                    onComposition={this.emitTypingEvent}
-                                    onHeightChange={this.handleHeightChange}
-                                    handlePostError={this.handlePostError}
-                                    value={readOnlyChannel ? '' : this.state.message}
-                                    onBlur={this.handleBlur}
-                                    emojiEnabled={this.props.enableEmojiPicker}
-                                    createMessage={createMessage}
-                                    channelId={currentChannel.id}
-                                    id='post_textbox'
-                                    ref='textbox'
-                                    disabled={readOnlyChannel}
-                                    characterLimit={this.props.maxPostSize}
-                                    preview={this.props.shouldShowPreview}
-                                    badConnection={this.props.badConnection}
-                                    listenForMentionKeyClick={true}
-                                    useChannelMentions={this.props.useChannelMentions}
-                                />
-                                <span
-                                    ref='createPostControls'
-                                    className='post-body__actions'
+                                <div>
+                                    {preview}
+                                    {serverError}
+                                    {postError}
+                                </div>
+                                <div className='d-flex justify-content-between'>
+                                    <MsgTyping
+                                        channelId={currentChannel.id}
+                                        postId=''
+                                    />
+                                    <TextboxLinks
+                                        characterLimit={this.props.maxPostSize}
+                                        showPreview={this.props.shouldShowPreview}
+                                        updatePreview={this.setShowPreview}
+                                        message={readOnlyChannel ? '' : this.state.message}
+                                    />
+                                </div>
+
+                            </div>
+                            <div className='post-create-body'>
+                                <div
+                                    role='application'
+                                    id='centerChannelFooter'
+                                    aria-label={ariaLabelMessageInput}
+                                    tabIndex='-1'
+                                    className='post-body__cell a11y__region'
+                                    data-a11y-sort-order='2'
                                 >
-                                    {fileUpload}
-                                    {emojiPicker}
-                                    <a
-                                        role='button'
-                                        tabIndex='0'
-                                        aria-label={formatMessage({
-                                            id: 'create_post.send_message',
-                                            defaultMessage: 'Send a message',
-                                        })}
-                                        className={sendButtonClass}
-                                        onClick={this.handleSubmit}
+                                    <Textbox
+                                        onChange={this.handleChange}
+                                        onKeyPress={this.postMsgKeyPress}
+                                        onKeyDown={this.handleKeyDown}
+                                        onMouseUp={this.handleMouseUpKeyUp}
+                                        onKeyUp={this.handleMouseUpKeyUp}
+                                        onComposition={this.emitTypingEvent}
+                                        onHeightChange={this.handleHeightChange}
+                                        handlePostError={this.handlePostError}
+                                        value={readOnlyChannel ? '' : this.state.message}
+                                        onBlur={this.handleBlur}
+                                        emojiEnabled={this.props.enableEmojiPicker}
+                                        createMessage={createMessage}
+                                        channelId={currentChannel.id}
+                                        id='post_textbox'
+                                        ref='textbox'
+                                        disabled={readOnlyChannel}
+                                        characterLimit={this.props.maxPostSize}
+                                        preview={this.props.shouldShowPreview}
+                                        badConnection={this.props.badConnection}
+                                        listenForMentionKeyClick={true}
+                                        useChannelMentions={this.props.useChannelMentions}
+                                    />
+                                    <span
+                                        ref='createPostControls'
+                                        className='post-body__actions'
                                     >
-                                        <LocalizedIcon
-                                            className='fa fa-paper-plane'
-                                            title={{
-                                                id: t('create_post.icon'),
-                                                defaultMessage: 'Create a post',
-                                            }}
-                                        />
-                                    </a>
-                                </span>
-                            </div>
-                            {tutorialTip}
-                        </div>
-                        <div
-                            id='postCreateFooter'
-                            role='form'
-                            className={postFooterClassName}
-                        >
-                            <div className='d-flex justify-content-between'>
-                                <MsgTyping
-                                    channelId={currentChannel.id}
-                                    postId=''
-                                />
-                                <TextboxLinks
-                                    characterLimit={this.props.maxPostSize}
-                                    showPreview={this.props.shouldShowPreview}
-                                    updatePreview={this.setShowPreview}
-                                    message={readOnlyChannel ? '' : this.state.message}
-                                />
-                            </div>
-                            <div>
-                                {postError}
-                                {preview}
-                                {serverError}
+                                        {fileUpload}
+                                        {emojiPicker}
+                                        <a
+                                            role='button'
+                                            tabIndex='0'
+                                            aria-label={formatMessage({
+                                                id: 'create_post.send_message',
+                                                defaultMessage: 'Send a message',
+                                            })}
+                                            className={sendButtonClass}
+                                            onClick={this.handleSubmit}
+                                        >
+                                            <LocalizedIcon
+                                                className='fa fa-paper-plane'
+                                                title={{
+                                                    id: t('create_post.icon'),
+                                                    defaultMessage: 'Create a post',
+                                                }}
+                                            />
+                                        </a>
+                                    </span>
+                                </div>
+                                {tutorialTip}
                             </div>
                         </div>
-                    </div>
-                    <PostDeletedModal
-                        show={this.state.showPostDeletedModal}
-                        onHide={this.hidePostDeletedModal}
-                    />
-                    <ConfirmModal
-                        title={notifyAllTitle}
-                        message={notifyAllMessage}
-                        confirmButtonText={notifyAllConfirm}
-                        show={this.state.showConfirmModal}
-                        onConfirm={this.handleNotifyAllConfirmation}
-                        onCancel={this.hideNotifyAllModal}
-                    />
-                </form>
-                <CreatePostModal
-                    show={createPostModalVisible}
-                    getChannelView={this.props.getChannelView}
-                />
-            </>
+                    </form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        variant='outline-danger'
+                        onClick={this.removeAll}
+                    >撤销</Button>
+                </Modal.Footer>
+            </Modal>
+
         );
     }
 }
 
 export default injectIntl(CreatePost);
-/* eslint-enable react/no-string-refs */
