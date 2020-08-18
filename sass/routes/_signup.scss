@@ -332,6 +332,18 @@ body {
                 }
             }
 
+            &.uaa {
+                background: #554488;
+
+                &:hover {
+                    background: darken(#554488, 10%);
+                }
+
+                .icon {
+                    background-image: url('../images/uaaLogo.png');
+                }
+            }
+
             &.gitlab {
                 background: #554488;
 

@@ -27,6 +27,7 @@ export default class SignupController extends React.PureComponent {
         enableOpenServer: PropTypes.bool.isRequired,
         noAccounts: PropTypes.bool.isRequired,
         enableSignUpWithEmail: PropTypes.bool.isRequired,
+        enableSignUpWithUaa: PropTypes.bool.isRequired,
         enableSignUpWithGitLab: PropTypes.bool.isRequired,
         enableSignUpWithGoogle: PropTypes.bool.isRequired,
         enableSignUpWithOffice365: PropTypes.bool.isRequired,
@@ -169,6 +170,26 @@ export default class SignupController extends React.PureComponent {
                         />
                     </span>
                 </Link>,
+            );
+        }
+
+        if (this.props.enableSignUpWithUaa) {
+            signupControls.push(
+                <a
+                    className='btn btn-custom-login btn--full uaa'
+                    key='uaa'
+                    href={Client4.getOAuthRoute() + '/gitlab/uaa' + window.location.search}
+                >
+                    <span>
+                        <span className='icon'/>
+                        <span>
+                            <FormattedMessage
+                                id='signup.uaa'
+                                defaultMessage='Uaa Single Sign-On'
+                            />
+                        </span>
+                    </span>
+                </a>,
             );
         }
 

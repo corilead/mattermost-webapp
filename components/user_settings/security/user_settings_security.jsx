@@ -45,6 +45,9 @@ export default class SecurityTab extends React.PureComponent {
         // Whether or not sign-up with email is enabled.
         enableSignUpWithEmail: PropTypes.bool,
 
+        // Whether or not sign-up with Uaa is enabled.
+        enableSignUpWithUaa: PropTypes.bool,
+
         // Whether or not sign-up with GitLab is enabled.
         enableSignUpWithGitLab: PropTypes.bool,
 
@@ -474,6 +477,7 @@ export default class SecurityTab extends React.PureComponent {
 
         if (this.props.activeSection === SECTION_SIGNIN) {
             let emailOption;
+            let uaaOption;
             let gitlabOption;
             let googleOption;
             let office365Option;
@@ -481,6 +485,23 @@ export default class SecurityTab extends React.PureComponent {
             let samlOption;
 
             if (user.auth_service === '') {
+                if (this.props.enableSignUpWithUaa) {
+                    uaaOption = (
+                        <div className='pb-3'>
+                            <Link
+                                className='btn btn-primary'
+                                to={'/claim/email_to_oauth?email=' + encodeURIComponent(user.email) + '&old_type=' + user.auth_service + '&new_type=' + Constants.GITLAB_SERVICE}
+                            >
+                                <FormattedMessage
+                                    id='user.settings.security.switchUaa'
+                                    defaultMessage='Switch to Using Uaa SSO'
+                                />
+                            </Link>
+                            <br/>
+                        </div>
+                    );
+                }
+
                 if (this.props.enableSignUpWithGitLab) {
                     gitlabOption = (
                         <div className='pb-3'>
