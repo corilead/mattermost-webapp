@@ -1629,6 +1629,8 @@
   "create_post.post": "发布",
   "create_post.read_only": "此讨论组为只读。只有拥有权限的成员可在此发布消息。",
   "create_post.send_message": "发送消息",
+  "create_post.can_not_send": "无法发送消息",
+  "create_post.secret_level_error": "仍有未指定密级的文件",
   "create_post.shortcutsNotSupported": "您的设备不支持键盘快捷键。",
   "create_post.tutorialTip.title": "发送消息中",
   "create_post.tutorialTip1": "在这里输入消息后按**回车**发表。",

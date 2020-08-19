@@ -26,6 +26,7 @@ import { getTable, formatMarkdownTableMessage, formatGithubCodePaste, isGitHubCo
 import { intlShape } from 'utils/react_intl';
 import * as UserAgent from 'utils/user_agent';
 import * as Utils from 'utils/utils.jsx';
+import { showNotification } from 'utils/notifications';
 import './index.css';
 
 import EditChannelHeaderModal from 'components/edit_channel_header_modal';
@@ -291,6 +292,8 @@ class CreatePost extends React.PureComponent {
     static defaultProps = {
         latestReplyablePostId: '',
     }
+
+    emojiContainer = null;
 
     static getDerivedStateFromProps(props, state) {
         let updatedState = { currentChannel: props.currentChannel };
@@ -576,6 +579,10 @@ class CreatePost extends React.PureComponent {
             useGroupMentions,
         } = this.props;
 
+        if (!this.checkSecretLevel()) {
+            return;
+        }
+
         const notificationsToChannel = this.props.enableConfirmNotificationsToChannel && this.props.useChannelMentions;
         let memberNotifyCount = 0;
         let channelTimezoneCount = 0;
@@ -712,6 +719,8 @@ class CreatePost extends React.PureComponent {
 
         post = hookResult.data;
 
+        // 拼装文件密级到post dody
+        post.file_secret_levels = draft.fileInfos ? draft.fileInfos.map((i) => i.secretLevel) : undefined;
         actions.onSubmitPost(post, draft.fileInfos);
         actions.scrollPostListToBottom();
 
@@ -932,6 +941,28 @@ class CreatePost extends React.PureComponent {
         this.draftsForChannel[channelId] = modifiedDraft;
 
         this.handleFileUploadChange();
+    }
+
+    checkSecretLevel = () => {
+        const files = this.props.draft.fileInfos;
+        if (files) {
+            const length = files.length;
+            const length1 = files.filter((f) => f.secretLevel).length;
+            if (length1 < length) {
+                showNotification({
+                    title: Utils.localizeMessage(
+                        'create_post.can_not_send',
+                        'Can not send this message.',
+                    ),
+                    body: Utils.localizeMessage(
+                        'create_post.secret_level_error',
+                        'There are files without “SecretLevel” remaining.',
+                    ),
+                });
+                return false;
+            }
+        }
+        return true;
     }
 
     removePreview = (id) => {
@@ -1357,6 +1388,7 @@ class CreatePost extends React.PureComponent {
                 <div>
                     <EmojiPickerOverlay
                         show={this.state.showEmojiPicker}
+                        container={this.emojiContainer}
                         target={this.getCreatePostControls}
                         onHide={this.hideEmojiPicker}
                         onEmojiClose={this.handleEmojiClose}
@@ -1405,12 +1437,16 @@ class CreatePost extends React.PureComponent {
                 <Modal.Header>
                     <Modal.Title>填写文件密级</Modal.Title>
                 </Modal.Header>
-                <Modal.Body className='file_preview_modal_body'>
+                <Modal.Body
+                    className='file_preview_modal_body'
+                >
                     <form
                         id='create_post'
-                        ref='topDiv'
                         className={centerClass}
                         onSubmit={this.handleSubmit}
+                        ref={(ref) => {
+                            this.emojiContainer = ref;
+                        }}
                     >
                         <div className={'post-create' + attachmentsDisabled + scrollbarClass}>
                             <div

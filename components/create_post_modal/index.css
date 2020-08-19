@@ -1,6 +1,11 @@
 .create_post_modal {
     top: calc(50% - 100px);
 }
+.create_post_modal .file_preview_modal_body{
+    max-height:unset !important;
+    height: auto !important;
+    overflow:unset !important;
+}
 
 .create_post_modal .file_preview_modal_body .file-preview {
     margin-bottom: 12px;
