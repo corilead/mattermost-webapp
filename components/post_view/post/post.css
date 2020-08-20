@@ -22,7 +22,6 @@
     display: inline-block;
     border-radius: 8px;
     width: auto !important;
-    max-width: 50% !important;
 }
 
 .post .post__header {

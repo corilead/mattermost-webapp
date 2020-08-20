@@ -3,16 +3,16 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Modal} from 'react-bootstrap';
-import {FormattedMessage} from 'react-intl';
+import { Modal } from 'react-bootstrap';
+import { FormattedMessage } from 'react-intl';
 
 import GlobeIcon from 'components/widgets/icons/globe_icon';
 import LockIcon from 'components/widgets/icons/lock_icon';
 import LocalizedInput from 'components/localized_input/localized_input';
 import Constants from 'utils/constants.jsx';
-import {getShortenedURL} from 'utils/url';
+import { getShortenedURL } from 'utils/url';
 import * as Utils from 'utils/utils.jsx';
-import {t} from 'utils/i18n.jsx';
+import { t } from 'utils/i18n.jsx';
 
 export default class NewChannelModal extends React.PureComponent {
     static propTypes = {
@@ -90,7 +90,7 @@ export default class NewChannelModal extends React.PureComponent {
 
     static getDerivedStateFromProps(props) {
         if (props.show === false) {
-            return {displayNameError: ''};
+            return { displayNameError: '' };
         }
 
         return null;
@@ -106,11 +106,12 @@ export default class NewChannelModal extends React.PureComponent {
         this.channelHeaderInput = React.createRef();
         this.channelPurposeInput = React.createRef();
         this.displayNameInput = React.createRef();
+        this.secretLevelInput = React.createRef();
     }
 
     onEnterKeyDown = (e) => {
         const enterPressed = Utils.isKeyPressed(e, Constants.KeyCodes.ENTER);
-        const {ctrlSend} = this.props;
+        const { ctrlSend } = this.props;
 
         // Enter pressed alone without required cmd or ctrl key
         if (ctrlSend && enterPressed && !e.ctrlKey) {
@@ -125,7 +126,7 @@ export default class NewChannelModal extends React.PureComponent {
 
         const displayName = this.displayNameInput.current.value.trim();
         if (displayName.length < Constants.MIN_CHANNELNAME_LENGTH) {
-            this.setState({displayNameError: true});
+            this.setState({ displayNameError: true });
             return;
         }
 
@@ -137,6 +138,7 @@ export default class NewChannelModal extends React.PureComponent {
             displayName: this.displayNameInput.current.value,
             header: this.channelHeaderInput.current.value,
             purpose: this.channelPurposeInput.current.value,
+            secretLevel: this.channelPurposeInput.current.value,
         };
         this.props.onDataChanged(newData);
     }
@@ -157,7 +159,7 @@ export default class NewChannelModal extends React.PureComponent {
     }
 
     render() {
-        const {canCreatePublicChannel, canCreatePrivateChannel} = this.props;
+        const { canCreatePublicChannel, canCreatePrivateChannel } = this.props;
 
         const enableTypeSelection = canCreatePublicChannel && canCreatePrivateChannel;
         var displayNameError = null;
@@ -194,7 +196,7 @@ export default class NewChannelModal extends React.PureComponent {
 
         const publicChannelDesc = (
             <div className='flex-parent'>
-                <GlobeIcon className='icon icon__globe icon--body type-icon'/>
+                <GlobeIcon className='icon icon__globe icon--body type-icon' />
                 <FormattedMessage
                     id='channel_modal.publicName'
                     defaultMessage='Public'
@@ -208,7 +210,7 @@ export default class NewChannelModal extends React.PureComponent {
 
         const privateChannelDesc = (
             <div className='flex-parent'>
-                <LockIcon className='icon icon__lock icon--body type-icon'/>
+                <LockIcon className='icon icon__lock icon--body type-icon' />
                 <FormattedMessage
                     id='channel_modal.privateName'
                     defaultMessage='Private'
@@ -337,7 +339,7 @@ export default class NewChannelModal extends React.PureComponent {
                                         type='text'
                                         ref={this.displayNameInput}
                                         className='form-control'
-                                        placeholder={{id: t('channel_modal.nameEx'), defaultMessage: 'E.g.: "Bugs", "Marketing", "客户支持"'}}
+                                        placeholder={{ id: t('channel_modal.nameEx'), defaultMessage: 'E.g.: "Bugs", "Marketing", "客户支持"' }}
                                         maxLength={Constants.MAX_CHANNELNAME_LENGTH}
                                         value={this.props.channelData.displayName}
                                         autoFocus={true}
@@ -357,6 +359,35 @@ export default class NewChannelModal extends React.PureComponent {
                                         </button>
                                         {')'}
                                     </p>
+                                </div>
+                            </div>
+                            <div className='form-group'>
+                                <div className='col-sm-3'>
+                                    <label
+                                        className='form__label control-label'
+                                        htmlFor='newChannelSecretLevel'
+                                    >
+                                        <FormattedMessage
+                                            id='channel_modal.secret_level'
+                                            defaultMessage='SecretLevel'
+                                        />
+                                    </label>
+                                </div>
+                                <div className='col-sm-9'>
+                                    <select
+                                        id='newChannelSecretLevel'
+                                        className='form-control'
+                                        ref={this.secretLevelInput}
+                                        style={{ width: 100 }}
+                                        value={this.props.channelData.purpose}
+                                        onChange={this.handleChange}
+                                    >
+                                        <option value={undefined}>未指定</option>
+                                        <option value='非密'>非密</option>
+                                        <option value='内部'>内部</option>
+                                        <option value='秘密'>秘密</option>
+                                        <option value='机密'>机密</option>
+                                    </select>
                                 </div>
                             </div>
                             <div className='form-group'>

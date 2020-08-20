@@ -22,7 +22,7 @@ import PostListRow from 'components/post_view/post_list_row';
 import ScrollToBottomArrows from 'components/post_view/scroll_to_bottom_arrows';
 import ToastWrapper from 'components/toast_wrapper';
 
-import './index.css';
+import './post_list_virtualized.css';
 
 const OVERSCAN_COUNT_BACKWARD = 80;
 const OVERSCAN_COUNT_FORWARD = 80;

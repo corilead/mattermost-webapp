@@ -24,7 +24,7 @@ import { getTable, formatMarkdownTableMessage, formatGithubCodePaste, isGitHubCo
 import { intlShape } from 'utils/react_intl';
 import * as UserAgent from 'utils/user_agent';
 import * as Utils from 'utils/utils.jsx';
-import './index.css';
+import './create_post_modal.css';
 
 import EditChannelHeaderModal from 'components/edit_channel_header_modal';
 import EditChannelPurposeModal from 'components/edit_channel_purpose_modal';
@@ -1479,7 +1479,7 @@ class CreatePost extends React.PureComponent {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
-                        bsStyle='outline-danger'
+                        bsStyle='danger'
                         onClick={this.removeAll}
                     >
                         <FormattedMessage

@@ -17,7 +17,7 @@ import PostHeader from 'components/post_view/post_header';
 import PostContext from 'components/post_view/post_context';
 import PostPreHeader from 'components/post_view/post_pre_header';
 
-import './index.css';
+import './post.css';
 
 class Post extends React.PureComponent {
     static propTypes = {
