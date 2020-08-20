@@ -1,0 +1,39 @@
+.separator__text {
+    background-color: #f5f5f5 !important;
+}
+
+.post {
+    margin: .5em 0;
+    padding-top: .5em !important;
+    padding-bottom: .5em !important;
+}
+
+.post .post__body {
+    background-color: #fff !important;
+    padding: 1em 2em;
+    display: inline-block;
+    border-radius: 8px;
+    width: auto !important;
+}
+
+.post .post__header {
+    font-size: 16px !important;
+    color: #000 !important;
+    margin-bottom: 12px;
+}
+
+.post.current--user .post__body {
+    background-color: #9fe65a !important;
+}
+
+.post.current--user .post-image__columns .post-image__column {
+    border: 1px solid transparent !important;
+}
+
+.post .post-image__columns .post-image__column:last-child {
+    margin-right: 0;
+}
+
+.post .profile-icon img {
+    border-radius: 4px !important;
+}

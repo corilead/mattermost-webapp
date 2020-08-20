@@ -2,11 +2,11 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {getFileThumbnailUrl, getFileUrl} from 'mattermost-redux/utils/file_utils';
-import {FileInfo} from 'mattermost-redux/types/files';
+import { getFileThumbnailUrl, getFileUrl } from 'mattermost-redux/utils/file_utils';
+import { FileInfo } from 'mattermost-redux/types/files';
 
-import {FileTypes} from 'utils/constants';
-import {trimFilename} from 'utils/file_utils';
+import { FileTypes } from 'utils/constants';
+import { trimFilename } from 'utils/file_utils';
 import {
     fileSizeToString,
     getFileType,
@@ -22,7 +22,7 @@ interface Props {
     /*
     * File detailed information
     */
-    fileInfo: FileInfo;
+    fileInfo: FileInfo & { secretLevel: string };
 
     /*
     * The index of this attachment preview in the parent FileAttachmentList
@@ -140,9 +140,9 @@ export default class FileAttachment extends React.PureComponent<Props, State> {
                     onClick={this.onAttachmentClick}
                 >
                     {this.state.loaded ? (
-                        <FileThumbnail fileInfo={fileInfo}/>
+                        <FileThumbnail fileInfo={fileInfo} />
                     ) : (
-                        <div className='post-image__load'/>
+                        <div className='post-image__load' />
                     )}
                 </a>
             );
@@ -158,6 +158,7 @@ export default class FileAttachment extends React.PureComponent<Props, State> {
                         </span>
                         <span className='post-image__type'>{fileInfo.extension.toUpperCase()}</span>
                         <span className='post-image__size'>{fileSizeToString(fileInfo.size)}</span>
+                        <span className='post-image__size'>{fileInfo.secretLevel || '密级未指定'}</span>
                     </div>
                 </div>
             );
@@ -173,7 +174,7 @@ export default class FileAttachment extends React.PureComponent<Props, State> {
                     handleImageClick={this.onAttachmentClick}
                     iconClass={'post-image__download'}
                 >
-                    <i className='icon icon-download-outline'/>
+                    <i className='icon icon-download-outline' />
                 </FilenameOverlay>
             );
         }

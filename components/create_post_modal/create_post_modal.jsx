@@ -2,10 +2,9 @@
 // See LICENSE.txt for license information.
 /* eslint-disable react/no-string-refs */
 
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Alert } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { Posts } from 'mattermost-redux/constants';
@@ -26,18 +25,15 @@ import { getTable, formatMarkdownTableMessage, formatGithubCodePaste, isGitHubCo
 import { intlShape } from 'utils/react_intl';
 import * as UserAgent from 'utils/user_agent';
 import * as Utils from 'utils/utils.jsx';
-import { showNotification } from 'utils/notifications';
 import './index.css';
 
 import EditChannelHeaderModal from 'components/edit_channel_header_modal';
 import EditChannelPurposeModal from 'components/edit_channel_purpose_modal';
-import EmojiPickerOverlay from 'components/emoji_picker/emoji_picker_overlay.jsx';
 import FilePreviewInModal from 'components/file_preview_in_modal';
 import FileUpload from 'components/file_upload';
 import LocalizedIcon from 'components/localized_icon';
 import MsgTyping from 'components/msg_typing';
 import ResetStatusModal from 'components/reset_status_modal';
-import EmojiIcon from 'components/widgets/icons/emoji_icon';
 import Textbox from 'components/textbox';
 import TextboxLinks from 'components/textbox/textbox_links';
 import TutorialTip from 'components/tutorial/tutorial_tip';
@@ -578,6 +574,7 @@ class CreatePost extends React.PureComponent {
             currentChannelMembersCount,
             useGroupMentions,
         } = this.props;
+        this.setState({ showError: false });
 
         if (!this.checkSecretLevel()) {
             return;
@@ -949,16 +946,7 @@ class CreatePost extends React.PureComponent {
             const length = files.length;
             const length1 = files.filter((f) => f.secretLevel).length;
             if (length1 < length) {
-                showNotification({
-                    title: Utils.localizeMessage(
-                        'create_post.can_not_send',
-                        'Can not send this message.',
-                    ),
-                    body: Utils.localizeMessage(
-                        'create_post.secret_level_error',
-                        'There are files without “SecretLevel” remaining.',
-                    ),
-                });
+                this.setState({ showError: true });
                 return false;
             }
         }
@@ -1380,40 +1368,6 @@ class CreatePost extends React.PureComponent {
             );
         }
 
-        let emojiPicker = null;
-        const emojiButtonAriaLabel = formatMessage({ id: 'emoji_picker.emojiPicker', defaultMessage: 'Emoji Picker' }).toLowerCase();
-
-        if (this.props.enableEmojiPicker && !readOnlyChannel && !this.props.shouldShowPreview) {
-            emojiPicker = (
-                <div>
-                    <EmojiPickerOverlay
-                        show={this.state.showEmojiPicker}
-                        container={this.emojiContainer}
-                        target={this.getCreatePostControls}
-                        onHide={this.hideEmojiPicker}
-                        onEmojiClose={this.handleEmojiClose}
-                        onEmojiClick={this.handleEmojiClick}
-                        onGifClick={this.handleGifClick}
-                        enableGifPicker={this.props.enableGifPicker}
-                        topOffset={-7}
-                    />
-                    <button
-                        type='button'
-                        aria-label={emojiButtonAriaLabel}
-                        onClick={this.toggleEmojiPicker}
-                        className={classNames('emoji-picker__container', 'post-action', {
-                            'post-action--active': this.state.showEmojiPicker,
-                        })}
-                    >
-                        <EmojiIcon
-                            id='emojiPickerButton'
-                            className={'icon icon--emoji '}
-                        />
-                    </button>
-                </div>
-            );
-        }
-
         let createMessage;
         if (readOnlyChannel) {
             createMessage = Utils.localizeMessage('create_post.read_only', 'This channel is read-only. Only members with permission can post here.');
@@ -1471,8 +1425,21 @@ class CreatePost extends React.PureComponent {
                                         message={readOnlyChannel ? '' : this.state.message}
                                     />
                                 </div>
-
                             </div>
+                            {this.state.showError &&
+                                <Alert variant='danger'>
+                                    <strong>
+                                        <FormattedMessage
+                                            id='create_post.can_not_send'
+                                            defaultMessage='Can not send this message'
+                                        />:
+                                    </strong>
+                                    <FormattedMessage
+                                        id='create_post.secret_level_error'
+                                        defaultMessage='There are files without “SecretLevel” remaining.'
+                                    />
+                                </Alert>
+                            }
                             <div className='post-create-body'>
                                 <div
                                     role='application'
@@ -1510,7 +1477,6 @@ class CreatePost extends React.PureComponent {
                                         className='post-body__actions'
                                     >
                                         {fileUpload}
-                                        {emojiPicker}
                                         <a
                                             role='button'
                                             tabIndex='0'
@@ -1540,10 +1506,23 @@ class CreatePost extends React.PureComponent {
                     <Button
                         variant='outline-danger'
                         onClick={this.removeAll}
-                    >撤销</Button>
+                    >
+                        <FormattedMessage
+                            id='create_post.cancel'
+                            defaultMessage='Cancel'
+                        />
+                    </Button>
+                    <Button
+                        variant='outline-success'
+                        onClick={this.handleSubmit}
+                    >
+                        <FormattedMessage
+                            id='create_post.send_message'
+                            defaultMessage='Send a message'
+                        />
+                    </Button>
                 </Modal.Footer>
             </Modal>
-
         );
     }
 }
