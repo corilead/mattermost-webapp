@@ -12,7 +12,6 @@ import { sortFileInfos } from 'mattermost-redux/utils/file_utils';
 
 import * as GlobalActions from 'actions/global_actions.jsx';
 import Constants, { StoragePrefixes, ModalIdentifiers, Locations, A11yClassNames } from 'utils/constants';
-import { t } from 'utils/i18n';
 import {
     containsAtChannel,
     postMessageOnKeyPress,
@@ -31,7 +30,6 @@ import EditChannelHeaderModal from 'components/edit_channel_header_modal';
 import EditChannelPurposeModal from 'components/edit_channel_purpose_modal';
 import FilePreviewInModal from 'components/file_preview_in_modal';
 import FileUpload from 'components/file_upload';
-import LocalizedIcon from 'components/localized_icon';
 import MsgTyping from 'components/msg_typing';
 import ResetStatusModal from 'components/reset_status_modal';
 import Textbox from 'components/textbox';
@@ -1341,11 +1339,6 @@ class CreatePost extends React.PureComponent {
             centerClass = 'center';
         }
 
-        let sendButtonClass = 'send-button theme';
-        if (!this.shouldEnableSendButton()) {
-            sendButtonClass += ' disabled';
-        }
-
         let attachmentsDisabled = '';
         if (!this.props.canUploadFiles) {
             attachmentsDisabled = ' post-create--attachment-disabled';
@@ -1477,24 +1470,6 @@ class CreatePost extends React.PureComponent {
                                         className='post-body__actions'
                                     >
                                         {fileUpload}
-                                        <a
-                                            role='button'
-                                            tabIndex='0'
-                                            aria-label={formatMessage({
-                                                id: 'create_post.send_message',
-                                                defaultMessage: 'Send a message',
-                                            })}
-                                            className={sendButtonClass}
-                                            onClick={this.handleSubmit}
-                                        >
-                                            <LocalizedIcon
-                                                className='fa fa-paper-plane'
-                                                title={{
-                                                    id: t('create_post.icon'),
-                                                    defaultMessage: 'Create a post',
-                                                }}
-                                            />
-                                        </a>
                                     </span>
                                 </div>
                                 {tutorialTip}
@@ -1504,7 +1479,7 @@ class CreatePost extends React.PureComponent {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
-                        variant='outline-danger'
+                        bsStyle='outline-danger'
                         onClick={this.removeAll}
                     >
                         <FormattedMessage
@@ -1513,7 +1488,7 @@ class CreatePost extends React.PureComponent {
                         />
                     </Button>
                     <Button
-                        variant='outline-success'
+                        bsStyle='primary'
                         onClick={this.handleSubmit}
                     >
                         <FormattedMessage

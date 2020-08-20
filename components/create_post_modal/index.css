@@ -1,10 +1,11 @@
 .create_post_modal {
     top: calc(50% - 100px);
 }
-.create_post_modal .file_preview_modal_body{
-    max-height:unset !important;
+
+.create_post_modal .file_preview_modal_body {
+    max-height: unset !important;
     height: auto !important;
-    overflow:unset !important;
+    overflow: unset !important;
 }
 
 .create_post_modal .file_preview_modal_body .file-preview {
@@ -13,8 +14,19 @@
     transition: all 0.3s;
 }
 
+.create_post_modal .file_preview_modal_body .file-preview select {
+    border-radius: 4px;
+    outline: 0;
+}
+
 .create_post_modal .file_preview_modal_body .file-preview:hover {
     background-color: #ccf2ff;
+    box-shadow: none !important;
+    border-color: #56bbff;
+}
+
+.create_post_modal .file_preview_modal_body .file-preview:hover select {
+    border-color: #56bbff;
 }
 
 .create_post_modal .file_preview_modal_body .post-body__cell {
