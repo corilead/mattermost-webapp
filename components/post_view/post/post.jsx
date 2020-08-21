@@ -3,14 +3,14 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {injectIntl} from 'react-intl';
+import { injectIntl } from 'react-intl';
 
-import {Posts} from 'mattermost-redux/constants';
-import {isMeMessage as checkIsMeMessage} from 'mattermost-redux/utils/post_utils';
+import { Posts } from 'mattermost-redux/constants';
+import { isMeMessage as checkIsMeMessage } from 'mattermost-redux/utils/post_utils';
 
 import * as PostUtils from 'utils/post_utils.jsx';
-import Constants, {A11yCustomEventTypes} from 'utils/constants';
-import {intlShape} from 'utils/react_intl';
+import Constants, { A11yCustomEventTypes } from 'utils/constants';
+import { intlShape } from 'utils/react_intl';
 import PostProfilePicture from 'components/post_profile_picture';
 import PostBody from 'components/post_view/post_body';
 import PostHeader from 'components/post_view/post_header';
@@ -137,7 +137,7 @@ class Post extends React.PureComponent {
 
         if (this.props.shouldHighlight) {
             this.highlightTimeout = setTimeout(() => {
-                this.setState({fadeOutHighlight: true});
+                this.setState({ fadeOutHighlight: true });
             }, Constants.PERMALINK_FADEOUT);
         }
     }
@@ -285,20 +285,24 @@ class Post extends React.PureComponent {
             className += ' cursor--pointer';
         }
 
+        if (post.file_ids && post.file_ids.length) {
+            className += ' has--attachments';
+        }
+
         return className + ' ' + sameUserClass + ' ' + rootUser + ' ' + postType + ' ' + currentUserCss;
     }
 
     setHover = () => {
-        this.setState({hover: true});
+        this.setState({ hover: true });
     }
 
     unsetHover = () => {
-        this.setState({hover: false});
+        this.setState({ hover: false });
     }
 
     handleAlt = (e) => {
         if (this.state.alt !== e.altKey) {
-            this.setState({alt: e.altKey});
+            this.setState({ alt: e.altKey });
         }
     }
 
@@ -317,11 +321,11 @@ class Post extends React.PureComponent {
     }
 
     handlePostFocus = () => {
-        this.setState({currentAriaLabel: this.props.createAriaLabel(this.props.intl)});
+        this.setState({ currentAriaLabel: this.props.createAriaLabel(this.props.intl) });
     }
 
     render() {
-        const {post} = this.props;
+        const { post } = this.props;
         if (!post.id) {
             return null;
         }
@@ -358,7 +362,7 @@ class Post extends React.PureComponent {
         }
 
         return (
-            <PostContext.Provider value={{handlePopupOpened: this.handleDropdownOpened}}>
+            <PostContext.Provider value={{ handlePopupOpened: this.handleDropdownOpened }}>
                 <div
                     ref={this.postRef}
                     id={'post_' + post.id}

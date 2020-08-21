@@ -1619,6 +1619,8 @@
   "copy_url_context_menu.getChannelLink": "复制链接",
   "create_comment.addComment": "添加一个评论...",
   "create_comment.comment": "添加评论",
+  "create_comment.cancel": "撤销",
+  "create_comment.secret_level_error": "仍有未指定密级的文件",
   "create_comment.commentTitle": "评论",
   "create_comment.file": "文件上传",
   "create_comment.files": "文件上传",

@@ -28,6 +28,11 @@ import {
     makeOnSubmit,
     makeOnEditLatestPost,
 } from 'actions/views/create_comment';
+
+import {
+    closeRightHandSide,
+} from 'actions/views/rhs';
+
 import {emitShortcutReactToLastPostFrom} from 'actions/post_actions';
 import {getPostDraft, getIsRhsExpanded, getSelectedPostFocussedAt} from 'selectors/rhs';
 import {showPreviewOnCreateComment} from 'selectors/views/textbox';
@@ -148,6 +153,7 @@ function makeMapDispatchToProps() {
             onUpdateCommentDraft,
             updateCommentDraftWithRootId: updateCommentDraft,
             onSubmit,
+            closeRightHandSide,
             onResetHistoryIndex,
             onMoveHistoryIndexBack,
             onMoveHistoryIndexForward,

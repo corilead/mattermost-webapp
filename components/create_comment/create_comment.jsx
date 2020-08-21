@@ -6,14 +6,15 @@ import $ from 'jquery';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import {FormattedMessage, injectIntl} from 'react-intl';
+import { Button } from 'react-bootstrap';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
-import {sortFileInfos} from 'mattermost-redux/utils/file_utils';
+import { sortFileInfos } from 'mattermost-redux/utils/file_utils';
 
 import * as GlobalActions from 'actions/global_actions.jsx';
 
-import Constants, {Locations} from 'utils/constants';
-import {intlShape} from 'utils/react_intl';
+import Constants, { Locations } from 'utils/constants';
+import { intlShape } from 'utils/react_intl';
 import * as UserAgent from 'utils/user_agent';
 import * as Utils from 'utils/utils.jsx';
 import {
@@ -24,11 +25,11 @@ import {
     splitMessageBasedOnCaretPosition,
     groupsMentionedInText,
 } from 'utils/post_utils.jsx';
-import {getTable, formatMarkdownTableMessage, isGitHubCodeBlock, formatGithubCodePaste} from 'utils/paste';
+import { getTable, formatMarkdownTableMessage, isGitHubCodeBlock, formatGithubCodePaste } from 'utils/paste';
 
 import ConfirmModal from 'components/confirm_modal';
 import EmojiPickerOverlay from 'components/emoji_picker/emoji_picker_overlay.jsx';
-import FilePreview from 'components/file_preview';
+import FilePreviewInModal from 'components/file_preview_in_modal';
 import FileUpload from 'components/file_upload';
 import MsgTyping from 'components/msg_typing';
 import PostDeletedModal from 'components/post_deleted_modal';
@@ -124,6 +125,8 @@ class CreateComment extends React.PureComponent {
          * Called when submitting the comment
          */
         onSubmit: PropTypes.func.isRequired,
+
+        closeRightHandSide: PropTypes.func.isRequired,
 
         /**
          * Called when resetting comment message history index
@@ -236,17 +239,17 @@ class CreateComment extends React.PureComponent {
             createPostErrorId: props.createPostErrorId,
             rootId: props.rootId,
             messageInHistory: props.messageInHistory,
-            draft: state.draft || {...props.draft, caretPosition: props.draft.message.length, uploadsInProgress: []},
+            draft: state.draft || { ...props.draft, caretPosition: props.draft.message.length, uploadsInProgress: [] },
         };
 
         const rootChanged = props.rootId !== state.rootId;
         const messageInHistoryChanged = props.messageInHistory !== state.messageInHistory;
         if (rootChanged || messageInHistoryChanged) {
-            updatedState = {...updatedState, draft: {...props.draft, uploadsInProgress: rootChanged ? [] : props.draft.uploadsInProgress}};
+            updatedState = { ...updatedState, draft: { ...props.draft, uploadsInProgress: rootChanged ? [] : props.draft.uploadsInProgress } };
         }
 
         if (props.createPostErrorId === 'api.post.create_post.root_id.app_error' && props.createPostErrorId !== state.createPostErrorId) {
-            updatedState = {...updatedState, showPostDeletedModal: true};
+            updatedState = { ...updatedState, showPostDeletedModal: true };
         }
 
         return updatedState;
@@ -271,7 +274,7 @@ class CreateComment extends React.PureComponent {
     }
 
     componentDidMount() {
-        const {useGroupMentions, getChannelMemberCountsByGroup, channelId, clearCommentDraftUploads, onResetHistoryIndex, setShowPreview, draft} = this.props;
+        const { useGroupMentions, getChannelMemberCountsByGroup, channelId, clearCommentDraftUploads, onResetHistoryIndex, setShowPreview, draft } = this.props;
         clearCommentDraftUploads();
         onResetHistoryIndex();
         setShowPreview(false);
@@ -362,7 +365,7 @@ class CreateComment extends React.PureComponent {
             return;
         }
 
-        const {clipboardData} = e;
+        const { clipboardData } = e;
         const table = getTable(clipboardData);
         if (!table) {
             return;
@@ -370,11 +373,11 @@ class CreateComment extends React.PureComponent {
 
         e.preventDefault();
 
-        const {draft} = this.state;
+        const { draft } = this.state;
         let message = draft.message;
 
         if (isGitHubCodeBlock(table.className)) {
-            const {formattedMessage, formattedCodeBlock} = formatGithubCodePaste(this.state.caretPosition, message, clipboardData);
+            const { formattedMessage, formattedCodeBlock } = formatGithubCodePaste(this.state.caretPosition, message, clipboardData);
             const newCaretPosition = this.state.caretPosition + formattedCodeBlock.length;
             message = formattedMessage;
             this.setCaretPosition(newCaretPosition);
@@ -385,10 +388,10 @@ class CreateComment extends React.PureComponent {
             this.setCaretPosition(newCaretPosition);
         }
 
-        const updatedDraft = {...draft, message};
+        const updatedDraft = { ...draft, message };
 
         this.props.onUpdateCommentDraft(updatedDraft);
-        this.setState({draft: updatedDraft});
+        this.setState({ draft: updatedDraft });
     }
 
     handleNotifyAllConfirmation = (e) => {
@@ -397,19 +400,19 @@ class CreateComment extends React.PureComponent {
     }
 
     hideNotifyAllModal = () => {
-        this.setState({showConfirmModal: false});
+        this.setState({ showConfirmModal: false });
     }
 
     showNotifyAllModal = () => {
-        this.setState({showConfirmModal: true});
+        this.setState({ showConfirmModal: true });
     }
 
     toggleEmojiPicker = () => {
-        this.setState({showEmojiPicker: !this.state.showEmojiPicker});
+        this.setState({ showEmojiPicker: !this.state.showEmojiPicker });
     }
 
     hideEmojiPicker = () => {
-        this.setState({showEmojiPicker: false});
+        this.setState({ showEmojiPicker: false });
     }
 
     handleEmojiClick = (emoji) => {
@@ -420,14 +423,14 @@ class CreateComment extends React.PureComponent {
             return;
         }
 
-        const {draft} = this.state;
+        const { draft } = this.state;
 
         let newMessage = '';
         if (draft.message === '') {
             newMessage = `:${emojiAlias}: `;
         } else {
-            const {draft: {message}} = this.state;
-            const {firstPiece, lastPiece} = splitMessageBasedOnCaretPosition(this.state.caretPosition, message);
+            const { draft: { message } } = this.state;
+            const { firstPiece, lastPiece } = splitMessageBasedOnCaretPosition(this.state.caretPosition, message);
 
             // check whether the first piece of the message is empty when cursor is placed at beginning of message and avoid adding an empty string at the beginning of the message
             newMessage = firstPiece === '' ? `:${emojiAlias}: ${lastPiece} ` : `${firstPiece} :${emojiAlias}: ${lastPiece} `;
@@ -451,7 +454,7 @@ class CreateComment extends React.PureComponent {
     }
 
     handleGifClick = (gif) => {
-        const {draft} = this.state;
+        const { draft } = this.state;
 
         let newMessage = '';
         if (draft.message === '') {
@@ -480,12 +483,16 @@ class CreateComment extends React.PureComponent {
     }
 
     handlePostError = (postError) => {
-        this.setState({postError});
+        this.setState({ postError });
     }
 
     handleSubmit = async (e) => {
         e.preventDefault();
         this.setShowPreview(false);
+
+        if (!this.checkSecretLevel()) {
+            return;
+        }
 
         const {
             channelMembersCount,
@@ -496,7 +503,7 @@ class CreateComment extends React.PureComponent {
             channelMemberCountsByGroup,
             useGroupMentions,
         } = this.props;
-        const {draft} = this.state;
+        const { draft } = this.state;
         const notificationsToChannel = enableConfirmNotificationsToChannel && useChannelMentions;
         let memberNotifyCount = 0;
         let channelTimezoneCount = 0;
@@ -529,7 +536,7 @@ class CreateComment extends React.PureComponent {
             };
 
             this.props.onUpdateCommentDraft(updatedDraft);
-            this.setState({draft: updatedDraft});
+            this.setState({ draft: updatedDraft });
         }
 
         if (notificationsToChannel &&
@@ -538,12 +545,12 @@ class CreateComment extends React.PureComponent {
             memberNotifyCount = channelMembersCount - 1;
             mentions = ['@all', '@channel'];
             if (isTimezoneEnabled) {
-                const {data} = await this.props.getChannelTimezones(this.props.channelId);
+                const { data } = await this.props.getChannelTimezones(this.props.channelId);
                 channelTimezoneCount = data ? data.length : 0;
             }
         }
 
-        if (!useChannelMentions && containsAtChannel(draft.message, {checkAllMentions: true})) {
+        if (!useChannelMentions && containsAtChannel(draft.message, { checkAllMentions: true })) {
             const updatedDraft = {
                 ...draft,
                 props: {
@@ -553,7 +560,7 @@ class CreateComment extends React.PureComponent {
             };
 
             this.props.onUpdateCommentDraft(updatedDraft);
-            this.setState({draft: updatedDraft});
+            this.setState({ draft: updatedDraft });
         }
 
         if (memberNotifyCount > 0) {
@@ -575,7 +582,7 @@ class CreateComment extends React.PureComponent {
             e.preventDefault();
         }
 
-        const {draft} = this.state;
+        const { draft } = this.state;
         const enableAddButton = this.shouldEnableAddButton();
 
         if (!enableAddButton) {
@@ -587,9 +594,9 @@ class CreateComment extends React.PureComponent {
         }
 
         if (this.state.postError) {
-            this.setState({errorClass: 'animation--highlight'});
+            this.setState({ errorClass: 'animation--highlight' });
             setTimeout(() => {
-                this.setState({errorClass: null});
+                this.setState({ errorClass: null });
             }, Constants.ANIMATION_TIMEOUT);
             return;
         }
@@ -609,7 +616,7 @@ class CreateComment extends React.PureComponent {
             ignoreSlash = true;
         }
 
-        const options = {ignoreSlash};
+        const options = { ignoreSlash };
 
         try {
             await this.props.onSubmit(options);
@@ -623,11 +630,11 @@ class CreateComment extends React.PureComponent {
                 this.props.onUpdateCommentDraft(draft);
             }
             err.submittedMessage = draft.message;
-            this.setState({serverError: err});
+            this.setState({ serverError: err });
             return;
         }
 
-        this.setState({draft: {...this.props.draft, uploadsInProgress: []}});
+        this.setState({ draft: { ...this.props.draft, uploadsInProgress: [] } });
     }
 
     commentMsgKeyPress = (e) => {
@@ -636,7 +643,7 @@ class CreateComment extends React.PureComponent {
             codeBlockOnCtrlEnter,
         } = this.props;
 
-        const {allowSending, withClosedCodeBlock, message} = postMessageOnKeyPress(e, this.state.draft.message, ctrlSend, codeBlockOnCtrlEnter, 0, 0, this.state.caretPosition);
+        const { allowSending, withClosedCodeBlock, message } = postMessageOnKeyPress(e, this.state.draft.message, ctrlSend, codeBlockOnCtrlEnter, 0, 0, this.state.caretPosition);
 
         if (allowSending) {
             e.persist();
@@ -645,10 +652,10 @@ class CreateComment extends React.PureComponent {
             }
 
             if (withClosedCodeBlock && message) {
-                const {draft} = this.state;
-                const updatedDraft = {...draft, message};
+                const { draft } = this.state;
+                const updatedDraft = { ...draft, message };
                 this.props.onUpdateCommentDraft(updatedDraft);
-                this.setState({draft: updatedDraft}, () => this.handleSubmit(e));
+                this.setState({ draft: updatedDraft }, () => this.handleSubmit(e));
                 this.draftsForPost[this.props.rootId] = updatedDraft;
             } else {
                 this.handleSubmit(e);
@@ -666,7 +673,7 @@ class CreateComment extends React.PureComponent {
     reactToLastMessage = (e) => {
         e.preventDefault();
 
-        const {emitShortcutReactToLastPostFrom} = this.props;
+        const { emitShortcutReactToLastPostFrom } = this.props;
 
         // Here we are not handling conditions such as check for modals,  popups etc as shortcut is only trigger on
         // textbox input focus. Since all of them will already be closed as soon as they loose focus.
@@ -674,7 +681,7 @@ class CreateComment extends React.PureComponent {
     }
 
     emitTypingEvent = () => {
-        const {channelId, rootId} = this.props;
+        const { channelId, rootId } = this.props;
         GlobalActions.emitLocalUserTypingEvent(channelId, rootId);
     }
 
@@ -693,10 +700,10 @@ class CreateComment extends React.PureComponent {
             serverError = null;
         }
 
-        const {draft} = this.state;
-        const updatedDraft = {...draft, message};
+        const { draft } = this.state;
+        const updatedDraft = { ...draft, message };
         this.props.onUpdateCommentDraft(updatedDraft);
-        this.setState({draft: updatedDraft, serverError}, () => {
+        this.setState({ draft: updatedDraft, serverError }, () => {
             this.scrollToBottom();
         });
         this.draftsForPost[this.props.rootId] = updatedDraft;
@@ -734,8 +741,8 @@ class CreateComment extends React.PureComponent {
             return;
         }
 
-        const {draft} = this.state;
-        const {message} = draft;
+        const { draft } = this.state;
+        const { message } = draft;
 
         if (!e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey && Utils.isKeyPressed(e, Constants.KeyCodes.UP) && message === '') {
             e.preventDefault();
@@ -743,7 +750,7 @@ class CreateComment extends React.PureComponent {
                 this.refs.textbox.blur();
             }
 
-            const {data: canEditNow} = this.props.onEditLatestPost();
+            const { data: canEditNow } = this.props.onEditLatestPost();
             if (!canEditNow) {
                 this.focusTextbox(true);
             }
@@ -769,7 +776,7 @@ class CreateComment extends React.PureComponent {
     }
 
     handleUploadStart = (clientIds) => {
-        const {draft} = this.state;
+        const { draft } = this.state;
         const uploadsInProgress = [...draft.uploadsInProgress, ...clientIds];
 
         const modifiedDraft = {
@@ -777,7 +784,7 @@ class CreateComment extends React.PureComponent {
             uploadsInProgress,
         };
         this.props.onUpdateCommentDraft(modifiedDraft);
-        this.setState({draft: modifiedDraft});
+        this.setState({ draft: modifiedDraft });
         this.draftsForPost[this.props.rootId] = modifiedDraft;
 
         // this is a bit redundant with the code that sets focus when the file input is clicked,
@@ -785,9 +792,9 @@ class CreateComment extends React.PureComponent {
         this.focusTextbox();
     }
 
-    handleUploadProgress = ({clientId, name, percent, type}) => {
-        const uploadsProgressPercent = {...this.state.uploadsProgressPercent, [clientId]: {percent, name, type}};
-        this.setState({uploadsProgressPercent});
+    handleUploadProgress = ({ clientId, name, percent, type }) => {
+        const uploadsProgressPercent = { ...this.state.uploadsProgressPercent, [clientId]: { percent, name, type } };
+        this.setState({ uploadsProgressPercent });
     }
 
     handleFileUploadComplete = (fileInfos, clientIds, channelId, rootId) => {
@@ -812,13 +819,13 @@ class CreateComment extends React.PureComponent {
         this.props.updateCommentDraftWithRootId(rootId, modifiedDraft);
         this.draftsForPost[rootId] = modifiedDraft;
         if (this.props.rootId === rootId) {
-            this.setState({draft: modifiedDraft});
+            this.setState({ draft: modifiedDraft });
         }
     }
 
     handleUploadError = (err, clientId = -1, currentChannelId, rootId = -1) => {
         if (clientId !== -1) {
-            const draft = {...this.draftsForPost[rootId]};
+            const draft = { ...this.draftsForPost[rootId] };
             const uploadsInProgress = [...draft.uploadsInProgress];
 
             const index = uploadsInProgress.indexOf(clientId);
@@ -833,7 +840,7 @@ class CreateComment extends React.PureComponent {
             this.props.updateCommentDraftWithRootId(rootId, modifiedDraft);
             this.draftsForPost[rootId] = modifiedDraft;
             if (this.props.rootId === rootId) {
-                this.setState({draft: modifiedDraft});
+                this.setState({ draft: modifiedDraft });
             }
         }
 
@@ -842,7 +849,7 @@ class CreateComment extends React.PureComponent {
             serverError = new Error(err);
         }
 
-        this.setState({serverError}, () => {
+        this.setState({ serverError }, () => {
             if (serverError) {
                 this.scrollToBottom();
             }
@@ -850,7 +857,7 @@ class CreateComment extends React.PureComponent {
     }
 
     removePreview = (id) => {
-        const {draft} = this.state;
+        const { draft } = this.state;
         const fileInfos = [...draft.fileInfos];
         const uploadsInProgress = [...draft.uploadsInProgress];
 
@@ -880,10 +887,65 @@ class CreateComment extends React.PureComponent {
         };
 
         this.props.onUpdateCommentDraft(modifiedDraft);
-        this.setState({draft: modifiedDraft});
+        this.setState({ draft: modifiedDraft });
         this.draftsForPost[this.props.rootId] = modifiedDraft;
-
         this.handleFileUploadChange();
+    }
+
+    // 清空所有附件
+    removeAll = () => {
+        const draft = { ...this.state.draft };
+        this.setState({ serverError: null });
+        const uploadsInProgress = draft.uploadsInProgress;
+        uploadsInProgress.forEach((id) => {
+            if (this.refs.fileUpload && this.refs.fileUpload) {
+                this.refs.fileUpload.cancelUpload(id);
+            }
+        });
+
+        const modifiedDraft = {
+            ...draft,
+            fileInfos: [],
+            uploadsInProgress: [],
+        };
+        this.props.onUpdateCommentDraft(modifiedDraft);
+        this.setState({ draft: modifiedDraft });
+        this.draftsForPost[this.props.rootId] = modifiedDraft;
+        this.handleFileUploadChange();
+        this.props.closeRightHandSide();
+    }
+
+    // 更换附件的密级
+    setSecretLevel = (id, value) => {
+        let modifiedDraft = {};
+        const draft = { ...this.state.draft };
+        const index = draft.fileInfos.findIndex((info) => info.id === id);
+        if (index > -1) {
+            const newInfos = [...draft.fileInfos];
+            const info = newInfos[index];
+            newInfos.splice(index, 1, { ...info, secretLevel: value });
+            modifiedDraft = {
+                ...draft,
+                fileInfos: newInfos,
+            };
+        }
+        this.props.onUpdateCommentDraft(modifiedDraft);
+        this.setState({ draft: modifiedDraft });
+        this.draftsForPost[this.props.rootId] = modifiedDraft;
+        this.handleFileUploadChange();
+    }
+
+    checkSecretLevel = () => {
+        const files = this.props.draft.fileInfos;
+        if (files) {
+            const length = files.length;
+            const length1 = files.filter((f) => f.secretLevel).length;
+            if (length1 < length) {
+                this.setState({ postError: Utils.localizeMessage('create_comment.secret_level_error', 'There are files without “SecretLevel” remaining.') });
+                return false;
+            }
+        }
+        return true;
     }
 
     getFileCount = () => {
@@ -937,15 +999,15 @@ class CreateComment extends React.PureComponent {
     }
 
     handleHeightChange = (height, maxHeight) => {
-        this.setState({renderScrollbar: height > maxHeight});
+        this.setState({ renderScrollbar: height > maxHeight });
     }
 
     render() {
-        const {draft} = this.state;
+        const { draft } = this.state;
         const readOnlyChannel = this.props.readOnlyChannel || !this.props.canPost;
-        const {formatMessage} = this.props.intl;
+        const { formatMessage } = this.props.intl;
         const enableAddButton = this.shouldEnableAddButton();
-        const {renderScrollbar, channelTimezoneCount, mentions, memberNotifyCount} = this.state;
+        const { renderScrollbar, channelTimezoneCount, mentions, memberNotifyCount } = this.state;
         const ariaLabelReplyInput = Utils.localizeMessage('accessibility.sections.rhsFooter', 'reply input region');
         let notifyAllMessage = '';
         let notifyAllTitle = '';
@@ -1061,37 +1123,48 @@ class CreateComment extends React.PureComponent {
         let postError = null;
         if (this.state.postError) {
             const postErrorClass = 'post-error' + (this.state.errorClass ? (' ' + this.state.errorClass) : '');
-            postError = <label className={postErrorClass}>{this.state.postError}</label>;
+            postError = (
+                <label
+                    className={postErrorClass}
+                    style={{ color: 'red ' }}
+                >
+                    {this.state.postError}
+                </label>);
         }
 
         let preview = null;
         if (!readOnlyChannel && (draft.fileInfos.length > 0 || draft.uploadsInProgress.length > 0)) {
             preview = (
-                <FilePreview
+                <FilePreviewInModal
                     fileInfos={draft.fileInfos}
                     onRemove={this.removePreview}
+                    onChangeSecretLevel={this.setSecretLevel}
                     uploadsInProgress={draft.uploadsInProgress}
                     uploadsProgressPercent={this.state.uploadsProgressPercent}
-                    ref='preview'
                 />
             );
         }
 
         let uploadsInProgressText = null;
         if (draft.uploadsInProgress.length > 0) {
+            let msg;
+            if (draft.uploadsInProgress.length === 1) {
+                msg = (
+                    <FormattedMessage
+                        id='create_comment.file'
+                        defaultMessage='File uploading'
+                    />);
+            } else {
+                msg = (
+                    <FormattedMessage
+                        id='create_comment.files'
+                        defaultMessage='Files uploading'
+                    />
+                );
+            }
             uploadsInProgressText = (
                 <span className='post-right-comments-upload-in-progress'>
-                    {draft.uploadsInProgress.length === 1 ? (
-                        <FormattedMessage
-                            id='create_comment.file'
-                            defaultMessage='File uploading'
-                        />
-                    ) : (
-                        <FormattedMessage
-                            id='create_comment.files'
-                            defaultMessage='Files uploading'
-                        />
-                    )}
+                    {msg}
                 </span>
             );
         }
@@ -1120,7 +1193,7 @@ class CreateComment extends React.PureComponent {
         }
 
         let emojiPicker = null;
-        const emojiButtonAriaLabel = formatMessage({id: 'emoji_picker.emojiPicker', defaultMessage: 'Emoji Picker'}).toLowerCase();
+        const emojiButtonAriaLabel = formatMessage({ id: 'emoji_picker.emojiPicker', defaultMessage: 'Emoji Picker' }).toLowerCase();
 
         if (this.props.enableEmojiPicker && !readOnlyChannel && !this.props.shouldShowPreview) {
             emojiPicker = (
@@ -1143,7 +1216,7 @@ class CreateComment extends React.PureComponent {
                             'post-action--active': this.state.showEmojiPicker,
                         })}
                     >
-                        <EmojiIcon className={'icon icon--emoji emoji-rhs '}/>
+                        <EmojiIcon className={'icon icon--emoji emoji-rhs '} />
                     </button>
                 </div>
             );
@@ -1244,12 +1317,22 @@ class CreateComment extends React.PureComponent {
                         </div>
                         <div className='text-right mt-2'>
                             {uploadsInProgressText}
+                            <Button
+                                bsStyle='danger'
+                                onClick={this.removeAll}
+                                style={{ marginRight: 8 }}
+                            >
+                                <FormattedMessage
+                                    id='create_comment.cancel'
+                                    defaultMessage='Cancel'
+                                />
+                            </Button>
                             <input
                                 type='button'
                                 disabled={!enableAddButton}
                                 id='addCommentButton'
                                 className={addButtonClass}
-                                value={formatMessage({id: 'create_comment.comment', defaultMessage: 'Add Comment'})}
+                                value={formatMessage({ id: 'create_comment.comment', defaultMessage: 'Add Comment' })}
                                 onClick={this.handleSubmit}
                             />
                             {preview}

@@ -1312,15 +1312,13 @@ class CreatePost extends React.PureComponent {
         let preview = null;
         if (!readOnlyChannel && (draft.fileInfos.length > 0 || draft.uploadsInProgress.length > 0)) {
             preview = (
-                <>
-                    <FilePreviewInModal
-                        fileInfos={draft.fileInfos}
-                        onRemove={this.removePreview}
-                        onChangeSecretLevel={this.setSecretLevel}
-                        uploadsInProgress={draft.uploadsInProgress}
-                        uploadsProgressPercent={this.state.uploadsProgressPercent}
-                    />
-                </>
+                <FilePreviewInModal
+                    fileInfos={draft.fileInfos}
+                    onRemove={this.removePreview}
+                    onChangeSecretLevel={this.setSecretLevel}
+                    uploadsInProgress={draft.uploadsInProgress}
+                    uploadsProgressPercent={this.state.uploadsProgressPercent}
+                />
             );
         }
 

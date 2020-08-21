@@ -1,0 +1,20 @@
+.file-preview.file-preview-in-modal {
+    margin-bottom: 12px;
+    width: 100%;
+    transition: all 0.3s;
+}
+
+.file-preview.file-preview-in-modal select {
+    border-radius: 4px;
+    outline: 0;
+}
+
+.file-preview.file-preview-in-modal:hover {
+    background-color: #ccf2ff;
+    box-shadow: none !important;
+    border-color: #56bbff;
+}
+
+.file-preview.file-preview-in-modal:hover select {
+    border-color: #56bbff;
+}

@@ -1,0 +1,15 @@
+.post-message__text {
+    display: inline-block;
+}
+
+.has-post-message {
+    padding: 0.6em 1em;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+.current--user .has-post-message {
+    background-color: rgb(133, 235, 141);
+}

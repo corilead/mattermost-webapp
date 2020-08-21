@@ -5,11 +5,11 @@
 import $ from 'jquery';
 import React from 'react';
 import Scrollbars from 'react-custom-scrollbars';
-import {Posts} from 'mattermost-redux/constants';
-import {Channel} from 'mattermost-redux/types/channels';
-import {ExtendedPost} from 'mattermost-redux/actions/posts';
-import {Post} from 'mattermost-redux/types/posts';
-import {UserProfile} from 'mattermost-redux/types/users';
+import { Posts } from 'mattermost-redux/constants';
+import { Channel } from 'mattermost-redux/types/channels';
+import { ExtendedPost } from 'mattermost-redux/actions/posts';
+import { Post } from 'mattermost-redux/types/posts';
+import { UserProfile } from 'mattermost-redux/types/users';
 
 import Constants from 'utils/constants';
 import DelayedAction from 'utils/delayed_action';
@@ -22,7 +22,9 @@ import RhsComment from 'components/rhs_comment';
 import RhsHeaderPost from 'components/rhs_header_post';
 import RhsRootPost from 'components/rhs_root_post';
 import FormattedMarkdownMessage from 'components/formatted_markdown_message';
-import {FakePost} from 'types/store/rhs';
+import { FakePost } from 'types/store/rhs';
+
+import './rhs_thread.css';
 
 export function renderView(props: Record<string, any>) {
     return (
@@ -33,7 +35,7 @@ export function renderView(props: Record<string, any>) {
 }
 
 export function renderThumbHorizontal() {
-    return (<div/>);
+    return (<div />);
 }
 
 export function renderThumbVertical(props: Record<string, any>) {
@@ -76,9 +78,9 @@ export default class RhsThread extends React.Component<Props, State> {
     private scrollStopAction: DelayedAction;
 
     public static getDerivedStateFromProps(props: Props, state: State) {
-        let updatedState: Partial<State> = {selected: props.selected};
+        let updatedState: Partial<State> = { selected: props.selected };
         if (state.selected && props.selected && state.selected.id !== props.selected.id) {
-            updatedState = {...updatedState, openTime: (new Date()).getTime()};
+            updatedState = { ...updatedState, openTime: (new Date()).getTime() };
         }
         return updatedState;
     }
@@ -186,7 +188,7 @@ export default class RhsThread extends React.Component<Props, State> {
     }
 
     private onBusy = (isBusy: boolean) => {
-        this.setState({isBusy});
+        this.setState({ isBusy });
     }
 
     private filterPosts = (posts: Post[], selected: Post | FakePost, openTime: number): Post[] => {
@@ -261,13 +263,13 @@ export default class RhsThread extends React.Component<Props, State> {
     public render(): JSX.Element {
         if (this.props.posts == null || this.props.selected == null || !this.props.channel) {
             return (
-                <div/>
+                <div />
             );
         }
 
         const postsArray = this.filterPosts(this.props.posts, this.props.selected, this.state.openTime);
         const postsLength = postsArray.length;
-        const {selected, currentUserId} = this.props;
+        const { selected, currentUserId } = this.props;
 
         let isRhsRootLastPost = false;
         let lastRhsCommentPost: Partial<Post> = {};
@@ -400,7 +402,7 @@ export default class RhsThread extends React.Component<Props, State> {
                             data-a11y-focus-child={true}
                             data-a11y-order-reversed={true}
                         >
-                            {!isFakeDeletedPost && <DateSeparator date={rootPostDay}/>}
+                            {!isFakeDeletedPost && <DateSeparator date={rootPostDay} />}
                             <RhsRootPost
                                 ref={selected.id}
                                 post={selected}
@@ -413,7 +415,7 @@ export default class RhsThread extends React.Component<Props, State> {
                                 handleCardClick={this.handleCardClick}
                                 isLastPost={isRhsRootLastPost}
                             />
-                            {isFakeDeletedPost && rootPostDay && <DateSeparator date={rootPostDay}/>}
+                            {isFakeDeletedPost && rootPostDay && <DateSeparator date={rootPostDay} />}
                             <div
                                 ref='rhspostlist'
                                 className='post-right-comments-container'

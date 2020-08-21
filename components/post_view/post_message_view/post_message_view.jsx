@@ -3,8 +3,8 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
-import {Posts} from 'mattermost-redux/constants';
+import { FormattedMessage } from 'react-intl';
+import { Posts } from 'mattermost-redux/constants';
 
 import * as PostUtils from 'utils/post_utils';
 import * as Utils from 'utils/utils';
@@ -12,6 +12,8 @@ import * as Utils from 'utils/utils';
 import PostMarkdown from 'components/post_markdown';
 import Pluggable from 'plugins/pluggable';
 import ShowMore from 'components/post_view/show_more';
+
+import './post_message_view.css';
 
 export default class PostMessageView extends React.PureComponent {
     static propTypes = {
@@ -89,7 +91,7 @@ export default class PostMessageView extends React.PureComponent {
             // and recompute textContainer height at ShowMore component
             // and see whether overflow text of show more/less is necessary or not.
             this.setState((prevState) => {
-                return {checkOverflow: prevState.checkOverflow + 1};
+                return { checkOverflow: prevState.checkOverflow + 1 };
             });
         }
     };
@@ -166,7 +168,16 @@ export default class PostMessageView extends React.PureComponent {
         }
 
         const id = isRHS ? `rhsPostMessageText_${post.id}` : `postMessageText_${post.id}`;
-
+        const markdown = (
+            <PostMarkdown
+                message={message}
+                imageProps={this.imageProps}
+                isRHS={isRHS}
+                options={options}
+                post={post}
+                channelId={post.channel_id}
+            />
+        );
         return (
             <ShowMore
                 checkOverflow={this.state.checkOverflow}
@@ -176,17 +187,10 @@ export default class PostMessageView extends React.PureComponent {
                     aria-readonly='true'
                     tabIndex='0'
                     id={id}
-                    className='post-message__text'
+                    className={`post-message__text ${(message && message !== '') && 'has-post-message'}`}
                     onClick={this.handleFormattedTextClick}
                 >
-                    <PostMarkdown
-                        message={message}
-                        imageProps={this.imageProps}
-                        isRHS={isRHS}
-                        options={options}
-                        post={post}
-                        channelId={post.channel_id}
-                    />
+                    {markdown}
                 </div>
                 {this.renderEditedIndicator()}
                 <Pluggable

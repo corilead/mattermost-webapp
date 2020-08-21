@@ -12,6 +12,8 @@ import * as Utils from 'utils/utils.jsx';
 
 import FileProgressPreview from '../file_preview/file_progress_preview';
 
+import './file_preview_in_modal.css';
+
 type UploadInfo = {
     name: string;
     percent?: number;
@@ -49,7 +51,7 @@ export default class FilePreview extends React.PureComponent<Props> {
         this.props.fileInfos.forEach((info) => {
             const type = Utils.getFileType(info.extension);
 
-            let className = 'file-preview post-image__column';
+            let className = 'file-preview file-preview-in-modal post-image__column';
             let previewImage;
             if (type === FileTypes.SVG && this.props.enableSVGs) {
                 previewImage = (
