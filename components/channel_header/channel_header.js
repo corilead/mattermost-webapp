@@ -686,6 +686,8 @@ class ChannelHeader extends React.PureComponent {
                                 <span>
                                     {archivedIcon}
                                     {channelTitle}
+                                    {' - '}
+                                    {channel.secretLevel || '密级未指定'}
                                 </span>
                             </strong>
                             <span
@@ -715,6 +717,8 @@ class ChannelHeader extends React.PureComponent {
                         <span>
                             {archivedIcon}
                             {channelTitle}
+                            {' - '}
+                            {channel.secretLevel || '密级未指定'}
                         </span>
                     </strong>
                     <BotBadge className='badge-popoverlist'/>
