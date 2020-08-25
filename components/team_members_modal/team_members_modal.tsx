@@ -88,7 +88,7 @@ export default class TeamMembersModal extends React.PureComponent<Props, State> 
                     >
                         <FormattedMessage
                             id='team_member_modal.members'
-                            defaultMessage='{team} Members'
+                            defaultMessage='「{team}」 Members'
                             values={{
                                 team: teamDisplayName,
                             }}

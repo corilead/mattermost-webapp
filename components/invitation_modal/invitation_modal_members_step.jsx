@@ -3,10 +3,10 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {injectIntl, FormattedMessage} from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 
-import {debounce} from 'mattermost-redux/actions/helpers';
-import {isEmail} from 'mattermost-redux/utils/helpers';
+import { debounce } from 'mattermost-redux/actions/helpers';
+import { isEmail } from 'mattermost-redux/utils/helpers';
 
 import FormattedMarkdownMessage from 'components/formatted_markdown_message';
 import InviteMembersIcon from 'components/widgets/icons/invite_members_icon';
@@ -14,9 +14,11 @@ import UsersEmailsInput from 'components/widgets/inputs/users_emails_input.jsx';
 
 import LinkIcon from 'components/widgets/icons/link_icon';
 
-import {getSiteURL} from 'utils/url';
-import {t} from 'utils/i18n.jsx';
-import {localizeMessage} from 'utils/utils.jsx';
+import { getSiteURL } from 'utils/url';
+import { t } from 'utils/i18n.jsx';
+import { localizeMessage } from 'utils/utils.jsx';
+
+import DeptTree from './department_tree';
 
 import './invitation_modal_members_step.scss';
 
@@ -41,6 +43,7 @@ class InvitationModalMembersStep extends React.PureComponent {
             copiedLink: false,
             termWithoutResults: null,
             usersInputValue: '',
+            showDeptTree: false,
         };
     }
 
@@ -56,9 +59,9 @@ class InvitationModalMembersStep extends React.PureComponent {
         textField.select();
 
         try {
-            this.setState({copiedLink: document.execCommand('copy')});
+            this.setState({ copiedLink: document.execCommand('copy') });
         } catch (err) {
-            this.setState({copiedLink: false});
+            this.setState({ copiedLink: false });
         }
         textField.remove();
 
@@ -66,17 +69,17 @@ class InvitationModalMembersStep extends React.PureComponent {
             clearTimeout(this.timeout);
         }
         this.timeout = setTimeout(() => {
-            this.setState({copiedLink: false});
+            this.setState({ copiedLink: false });
         }, 3000);
     }
 
     debouncedSearchProfiles = debounce((term, callback) => {
-        this.props.searchProfiles(term).then(({data}) => {
+        this.props.searchProfiles(term).then(({ data }) => {
             callback(data);
             if (data.length === 0) {
-                this.setState({termWithoutResults: term});
+                this.setState({ termWithoutResults: term });
             } else {
-                this.setState({termWithoutResults: null});
+                this.setState({ termWithoutResults: null });
             }
         }).catch(() => {
             callback([]);
@@ -96,12 +99,12 @@ class InvitationModalMembersStep extends React.PureComponent {
     }
 
     onChange = (usersAndEmails) => {
-        this.setState({usersAndEmails});
+        this.setState({ usersAndEmails });
         this.props.onEdit(usersAndEmails.length > 0 || this.state.usersInputValue);
     }
 
     onUsersInputChange = (usersInputValue) => {
-        this.setState({usersInputValue});
+        this.setState({ usersInputValue });
         this.props.onEdit(this.state.usersAndEmails.length > 0 || usersInputValue);
     }
 
@@ -134,13 +137,13 @@ class InvitationModalMembersStep extends React.PureComponent {
         return (
             <div className='InvitationModalMembersStep'>
                 <div className='modal-icon'>
-                    <InviteMembersIcon/>
+                    <InviteMembersIcon />
                 </div>
                 <h1 id='invitation_modal_title'>
                     <FormattedMarkdownMessage
                         id='invitation_modal.members.title'
-                        defaultMessage='Invite **Members** to {teamName}'
-                        values={{teamName: this.props.teamName}}
+                        defaultMessage='Invite **Members** to 「{teamName}」'
+                        values={{ teamName: this.props.teamName }}
                     />
                 </h1>
                 <div
@@ -160,7 +163,7 @@ class InvitationModalMembersStep extends React.PureComponent {
                             type='text'
                             readOnly={true}
                             value={inviteUrl}
-                            aria-label={this.props.intl.formatMessage({id: 'invitation_modal.members.share_link.input', defaultMessage: 'team invite link'})}
+                            aria-label={this.props.intl.formatMessage({ id: 'invitation_modal.members.share_link.input', defaultMessage: 'team invite link' })}
                             data-testid='shareLinkInput'
                         />
                         <button
@@ -168,7 +171,7 @@ class InvitationModalMembersStep extends React.PureComponent {
                             onClick={this.copyLink}
                             data-testid='shareLinkInputButton'
                         >
-                            <LinkIcon/>
+                            <LinkIcon />
                             {!this.state.copiedLink &&
                                 <FormattedMessage
                                     id='invitation_modal.members.share_link.copy_button'
@@ -191,14 +194,13 @@ class InvitationModalMembersStep extends React.PureComponent {
                     </div>
                 </div>
                 <div className='invitation-modal-or'>
-                    <hr/>
+                    <hr />
                     <div>
                         <FormattedMessage
                             id='invitation_modal.members.or'
                             defaultMessage='OR'
                         />
                     </div>
-
                 </div>
                 <div
                     className='search-and-add'
@@ -210,6 +212,17 @@ class InvitationModalMembersStep extends React.PureComponent {
                             defaultMessage='Add or Invite People'
                         />
                     </h2>
+                    <div className={`select-box ${this.state.showDeptTree ? '' : 'hide-dept'}`}>
+                        <a
+                            onClick={() => {
+                                this.setState({ showDeptTree: !this.state.showDeptTree });
+                            }}
+                        ><FormattedMessage id='invitation_modal.members.dept-filter-enable' defaultMessage='Seach User Filtered By Department' />&nbsp;&nbsp;<span className={`direction-icon ${this.state.showDeptTree ? 'up' : 'down'}`}>^</span></a>
+                        <div>
+                            <div className='select-box-side'><div><DeptTree /></div></div>
+                            <div className='select-box-side'><div>用户列表</div></div>
+                        </div>
+                    </div>
                     <div data-testid='inputPlaceholder'>
                         <UsersEmailsInput
                             usersLoader={this.usersLoader}
@@ -228,16 +241,16 @@ class InvitationModalMembersStep extends React.PureComponent {
                     </div>
                     <div className='help-text'>
                         {this.props.emailInvitationsEnabled &&
-                        <FormattedMessage
-                            id='invitation_modal.members.search-and-add.description'
-                            defaultMessage='Add existing members or send email invites to new members.'
-                        />
+                            <FormattedMessage
+                                id='invitation_modal.members.search-and-add.description'
+                                defaultMessage='Add existing members or send email invites to new members.'
+                            />
                         }
                         {!this.props.emailInvitationsEnabled &&
-                        <FormattedMessage
-                            id='invitation_modal.members.search-and-add.description-email-disabled'
-                            defaultMessage='Add existing members to this team.'
-                        />
+                            <FormattedMessage
+                                id='invitation_modal.members.search-and-add.description-email-disabled'
+                                defaultMessage='Add existing members to this team.'
+                            />
                         }
                     </div>
                 </div>

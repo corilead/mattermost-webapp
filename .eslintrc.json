@@ -22,7 +22,10 @@
     }
   },
   "rules": {
-    "eol-last": ["error", "always"],
+    "eol-last": [
+      "error",
+      "always"
+    ],
     "import/no-unresolved": 2,
     "import/order": [
       "error",
@@ -56,11 +59,15 @@
     "multiline-ternary": 0,
     "react/jsx-tag-spacing": 0,
     "react/jsx-no-literals": 0,
-    "react/no-string-refs": 2
+    "react/no-string-refs": 2,
+    "react/jsx-max-props-per-line": 0
   },
   "overrides": [
     {
-      "files": ["**/*.tsx", "**/*.ts"],
+      "files": [
+        "**/*.tsx",
+        "**/*.ts"
+      ],
       "extends": [
         "plugin:@typescript-eslint/recommended"
       ],
@@ -105,7 +112,9 @@
       }
     },
     {
-      "files": ["tests/**"],
+      "files": [
+        "tests/**"
+      ],
       "env": {
         "jest": true
       },
@@ -117,7 +126,9 @@
       }
     },
     {
-      "files": ["e2e/**"],
+      "files": [
+        "e2e/**"
+      ],
       "rules": {
         "func-names": 0,
         "import/no-unresolved": 0,

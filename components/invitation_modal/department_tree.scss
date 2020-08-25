@@ -1,0 +1,60 @@
+.dept-node-wrap {
+    display: flex;
+    justify-content: start;
+    align-items: stretch;
+
+    .dept-expand-btn {
+        width: 2em;
+        height: 1.6em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+
+        .dept-expand-btn-box {
+            position: relative;
+            margin-top: 0.25em;
+            width: 1em;
+            height: 1em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #ccc;
+            transition: all 0.3s;
+
+            .h {
+                width: 0.5em;
+                height: 1px;
+                background-color: #ccc;
+            }
+
+            .v {
+                position: absolute;
+                width: 1px;
+                height: 0.5em;
+                top: calc(100% - 0.25 em);
+                left: 50%;
+                background-color: #ccc;
+            }
+        }
+
+        .dept-expand-btn-box:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+    }
+
+    .dept-node-title {
+        font-size: 14px;
+        height: 2em;
+        line-height: 2em;
+        padding: 0 1em 0 0.5em;
+        display: inline-block;
+        transition: all 0.3s;
+        user-select: none;
+    }
+
+    .dept-node-title:hover {
+        background-color: #b4ddf86c;
+    }
+}
