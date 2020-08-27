@@ -4,8 +4,7 @@
     align-items: stretch;
 
     .dept-expand-btn {
-        width: 2em;
-        height: 1.6em;
+        width: 1.5em;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -13,7 +12,7 @@
 
         .dept-expand-btn-box {
             position: relative;
-            margin-top: 0.25em;
+            margin-top: 0.5em;
             width: 1em;
             height: 1em;
             display: flex;
@@ -46,15 +45,22 @@
 
     .dept-node-title {
         font-size: 14px;
-        height: 2em;
-        line-height: 2em;
-        padding: 0 1em 0 0.5em;
+        height: 1.8em;
+        line-height: 1.8em;
+        margin: 0.1em 0;
+        padding: 0 1em;
+        border-radius: 2px;
         display: inline-block;
         transition: all 0.3s;
         user-select: none;
     }
 
     .dept-node-title:hover {
-        background-color: #b4ddf86c;
+        background-color: #b7e2ff;
     }
+
+    .dept-node-title.selected {
+        background-color: #74c4fa !important;
+    }
+
 }

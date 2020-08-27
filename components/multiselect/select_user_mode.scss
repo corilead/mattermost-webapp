@@ -1,0 +1,19 @@
+.select-user-mode {
+    margin-bottom: 0.5em;
+    padding-left: 1em;
+    transition: all 0.3s;
+
+    a {
+        text-decoration: none;
+        color: #555;
+    }
+
+    .direction-icon {
+        display: inline-block;
+        transition: all 0.3s;
+    }
+
+    .direction-icon.down {
+        transform: rotate(180deg);
+    }
+}

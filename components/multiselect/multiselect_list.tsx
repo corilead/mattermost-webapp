@@ -3,16 +3,16 @@
 /* eslint-disable react/no-string-refs */
 
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
-import {getOptionValue} from 'react-select/src/builtins';
+import { getOptionValue } from 'react-select/src/builtins';
 
 import Constants from 'utils/constants';
-import {cmdOrCtrlPressed} from 'utils/utils.jsx';
+import { cmdOrCtrlPressed } from 'utils/utils.jsx';
 
 import LoadingScreen from 'components/loading_screen';
 
-import {Value} from './multiselect';
+import { Value } from './multiselect';
 
 export type Props<T extends Value> = {
     ariaLabelRenderer: getOptionValue<T>;
@@ -89,7 +89,7 @@ export default class MultiSelectList<T extends Value> extends React.PureComponen
     // setSelected updates the selected index and is referenced
     // externally by the MultiSelect component.
     public setSelected = (selected: number) => {
-        this.setState({selected});
+        this.setState({ selected });
     }
 
     private handleArrowPress = (e: KeyboardEvent) => {
@@ -103,27 +103,23 @@ export default class MultiSelectList<T extends Value> extends React.PureComponen
         }
 
         let selected;
-        switch (e.key) {
-        case KeyCodes.DOWN[0]:
+        if (e.key === KeyCodes.DOWN[0]) {
             if (this.state.selected === -1) {
                 selected = 0;
-                break;
+            } else {
+                selected = Math.min(this.state.selected + 1, options.length - 1);
             }
-            selected = Math.min(this.state.selected + 1, options.length - 1);
-            break;
-        case KeyCodes.UP[0]:
+        } else if (e.key === KeyCodes.UP[0]) {
             if (this.state.selected === -1) {
                 selected = 0;
-                break;
+            } else {
+                selected = Math.max(this.state.selected - 1, 0);
             }
-            selected = Math.max(this.state.selected - 1, 0);
-            break;
-        default:
+        } else {
             return;
         }
-
         e.preventDefault();
-        this.setState({selected});
+        this.setState({ selected });
         this.props.onSelect(options[selected]);
     }
 

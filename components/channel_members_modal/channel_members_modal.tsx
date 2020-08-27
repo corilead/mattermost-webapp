@@ -87,7 +87,7 @@ export default class ChannelMembersModal extends React.PureComponent<Props, Stat
                             componentClass='h1'
                             id='channelMembersModalLabel'
                         >
-                            <span className='name'>{this.props.channel.display_name}</span>
+                            <span>「{this.props.channel.display_name}」</span>
                             <FormattedMessage
                                 id='channel_members_modal.members'
                                 defaultMessage=' Members'

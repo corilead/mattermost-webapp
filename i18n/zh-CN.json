@@ -1504,7 +1504,7 @@
   "channel_members_dropdown.menuAriaLabel": "更改讨论组成员角色",
   "channel_members_dropdown.remove_from_channel": "从讨论组移除",
   "channel_members_modal.addNew": " 添加成员",
-  "channel_members_modal.members": " 位成员",
+  "channel_members_modal.members": " 的成员",
   "channel_modal.cancel": "取消",
   "channel_modal.createNew": "创建讨论组",
   "channel_modal.descriptionHelp": "描述此讨论组如何被使用。",

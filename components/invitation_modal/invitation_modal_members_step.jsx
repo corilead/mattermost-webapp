@@ -18,8 +18,6 @@ import { getSiteURL } from 'utils/url';
 import { t } from 'utils/i18n.jsx';
 import { localizeMessage } from 'utils/utils.jsx';
 
-import DeptTree from './department_tree';
-
 import './invitation_modal_members_step.scss';
 
 class InvitationModalMembersStep extends React.PureComponent {
@@ -212,17 +210,6 @@ class InvitationModalMembersStep extends React.PureComponent {
                             defaultMessage='Add or Invite People'
                         />
                     </h2>
-                    <div className={`select-box ${this.state.showDeptTree ? '' : 'hide-dept'}`}>
-                        <a
-                            onClick={() => {
-                                this.setState({ showDeptTree: !this.state.showDeptTree });
-                            }}
-                        ><FormattedMessage id='invitation_modal.members.dept-filter-enable' defaultMessage='Seach User Filtered By Department' />&nbsp;&nbsp;<span className={`direction-icon ${this.state.showDeptTree ? 'up' : 'down'}`}>^</span></a>
-                        <div>
-                            <div className='select-box-side'><div><DeptTree /></div></div>
-                            <div className='select-box-side'><div>用户列表</div></div>
-                        </div>
-                    </div>
                     <div data-testid='inputPlaceholder'>
                         <UsersEmailsInput
                             usersLoader={this.usersLoader}

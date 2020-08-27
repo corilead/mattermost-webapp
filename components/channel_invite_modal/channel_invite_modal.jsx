@@ -3,13 +3,13 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Modal} from 'react-bootstrap';
-import {FormattedMessage} from 'react-intl';
-import {Client4} from 'mattermost-redux/client';
+import { Modal } from 'react-bootstrap';
+import { FormattedMessage } from 'react-intl';
+import { Client4 } from 'mattermost-redux/client';
 
-import {filterProfilesMatchingTerm} from 'mattermost-redux/utils/user_utils';
+import { filterProfilesMatchingTerm } from 'mattermost-redux/utils/user_utils';
 
-import {displayEntireNameForUser, localizeMessage, isGuest} from 'utils/utils.jsx';
+import { displayEntireNameForUser, localizeMessage, isGuest } from 'utils/utils.jsx';
 import ProfilePicture from 'components/profile_picture';
 import MultiSelect from 'components/multiselect/multiselect';
 import AddIcon from 'components/widgets/icons/fa_add_icon';
@@ -72,7 +72,7 @@ export default class ChannelInviteModal extends React.PureComponent {
             values.push(value);
         }
 
-        this.setState({values});
+        this.setState({ values });
     };
 
     componentDidMount() {
@@ -83,7 +83,7 @@ export default class ChannelInviteModal extends React.PureComponent {
     }
 
     onHide = () => {
-        this.setState({show: false});
+        this.setState({ show: false });
     };
 
     handleInviteError = (err) => {
@@ -96,7 +96,7 @@ export default class ChannelInviteModal extends React.PureComponent {
     };
 
     handleDelete = (values) => {
-        this.setState({values});
+        this.setState({ values });
     };
 
     setUsersLoadingState = (loadingState) => {
@@ -115,7 +115,7 @@ export default class ChannelInviteModal extends React.PureComponent {
     };
 
     handleSubmit = (e) => {
-        const {actions, channel} = this.props;
+        const { actions, channel } = this.props;
         if (e) {
             e.preventDefault();
         }
@@ -135,7 +135,7 @@ export default class ChannelInviteModal extends React.PureComponent {
             return;
         }
 
-        this.setState({saving: true});
+        this.setState({ saving: true });
 
         actions.addUsersToChannel(channel.id, userIds).then((result) => {
             if (result.error) {
@@ -216,7 +216,7 @@ export default class ChannelInviteModal extends React.PureComponent {
                 </div>
                 <div className='more-modal__actions'>
                     <div className='more-modal__actions--round'>
-                        <AddIcon/>
+                        <AddIcon />
                     </div>
                 </div>
             </div>
@@ -298,7 +298,7 @@ export default class ChannelInviteModal extends React.PureComponent {
                             id='channel_invite.addNewMembers'
                             defaultMessage='Add New Members to '
                         />
-                        <span className='name'>{this.props.channel.display_name}</span>
+                        <span>「{this.props.channel.display_name}」</span>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body

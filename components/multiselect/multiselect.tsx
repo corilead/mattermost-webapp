@@ -2,16 +2,19 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import ReactSelect from 'react-select';
 
-import {InputActionMeta} from 'react-select/src/types';
-import {getOptionValue} from 'react-select/src/builtins';
+import { InputActionMeta } from 'react-select/src/types';
+import { getOptionValue } from 'react-select/src/builtins';
 
-import {Constants, A11yCustomEventTypes} from 'utils/constants';
+import { Constants, A11yCustomEventTypes } from 'utils/constants';
 import SaveButton from 'components/save_button';
 
 import MultiSelectList from './multiselect_list';
+import './select_user_mode.scss';
+import './select_box.scss';
+import DeptTree from './department_tree';
 
 export type Value = {
     deleteAt?: number;
@@ -48,7 +51,7 @@ export type Props<T extends Value> = {
     submitImmediatelyOn?: (value: T) => void;
     totalCount?: number;
     users?: unknown[];
-    valueRenderer: (props: {data: T}) => any;
+    valueRenderer: (props: { data: T }) => any;
     values: T[];
 }
 
@@ -56,6 +59,7 @@ export type State = {
     a11yActive: boolean;
     input: string;
     page: number;
+    showDeptTree: boolean;
 }
 
 const KeyCodes = Constants.KeyCodes;
@@ -76,6 +80,7 @@ export default class MultiSelect<T extends Value> extends React.PureComponent<Pr
             a11yActive: false,
             page: 0,
             input: '',
+            showDeptTree: false,
         };
     }
 
@@ -103,11 +108,11 @@ export default class MultiSelect<T extends Value> extends React.PureComponent<Pr
     }
 
     private handleA11yActivateEvent = () => {
-        this.setState({a11yActive: true});
+        this.setState({ a11yActive: true });
     }
 
     private handleA11yDeactivateEvent = () => {
-        this.setState({a11yActive: false});
+        this.setState({ a11yActive: false });
     }
 
     private nextPage = () => {
@@ -117,7 +122,7 @@ export default class MultiSelect<T extends Value> extends React.PureComponent<Pr
         if (this.listRef.current) {
             this.listRef.current.setSelected(0);
         }
-        this.setState({page: this.state.page + 1});
+        this.setState({ page: this.state.page + 1 });
     }
 
     private prevPage = () => {
@@ -132,11 +137,11 @@ export default class MultiSelect<T extends Value> extends React.PureComponent<Pr
         if (this.listRef.current) {
             this.listRef.current.setSelected(0);
         }
-        this.setState({page: this.state.page - 1});
+        this.setState({ page: this.state.page - 1 });
     }
 
     public resetPaging = () => {
-        this.setState({page: 0});
+        this.setState({ page: 0 });
     }
 
     private onSelect = (selected: T | null) => {
@@ -159,7 +164,7 @@ export default class MultiSelect<T extends Value> extends React.PureComponent<Pr
 
         if (this.reactSelectRef.current) {
             this.reactSelectRef.current.select.handleInputChange(
-                {currentTarget: {value: ''}} as React.KeyboardEvent<HTMLInputElement>,
+                { currentTarget: { value: '' } } as React.KeyboardEvent<HTMLInputElement>,
             );
             this.reactSelectRef.current.focus();
         }
@@ -183,7 +188,7 @@ export default class MultiSelect<T extends Value> extends React.PureComponent<Pr
             return;
         }
 
-        this.setState({input});
+        this.setState({ input });
 
         if (this.listRef.current) {
             if (input === '') {
@@ -198,22 +203,18 @@ export default class MultiSelect<T extends Value> extends React.PureComponent<Pr
     }
 
     private onInputKeyDown = (e: React.KeyboardEvent) => {
-        switch (e.key) {
-        case KeyCodes.ENTER[0]:
+        if (e.key === KeyCodes.ENTER[0]) {
             e.preventDefault();
-            break;
         }
     }
 
     private handleEnterPress = (e: KeyboardEvent) => {
-        switch (e.key) {
-        case KeyCodes.ENTER[0]:
+        if (e.key === KeyCodes.ENTER[0]) {
             if (this.selected == null) {
                 this.props.handleSubmit();
                 return;
             }
             this.onAdd(this.selected);
-            break;
         }
     }
 
@@ -241,7 +242,7 @@ export default class MultiSelect<T extends Value> extends React.PureComponent<Pr
 
     public render() {
         const options = Object.assign([...this.props.options]);
-        const {totalCount, users, values} = this.props;
+        const { totalCount, users, values } = this.props;
 
         let numRemainingText;
         if (this.props.numRemainingText) {
@@ -411,6 +412,22 @@ export default class MultiSelect<T extends Value> extends React.PureComponent<Pr
                         {noteTextContainer}
                     </div>
                 </div>
+                <div className='select-user-mode'>
+                    <a
+                        onClick={() => {
+                            this.setState({ showDeptTree: !this.state.showDeptTree });
+                        }}
+                    >
+                        <FormattedMessage id='invitation_modal.members.dept-filter-enable' defaultMessage='Seach User Filtered By Department' />
+                        {'  '}
+                        <span className={`direction-icon ${this.state.showDeptTree ? 'up' : 'down'}`}>^</span>
+                    </a>
+                </div>
+                <div className={`select-box ${this.state.showDeptTree ? '' : 'hide-dept'}`}>
+                    <div>
+                        <DeptTree />
+                    </div>
+                </div>
                 <MultiSelectList
                     ref={this.listRef}
                     options={optionsToDisplay}
@@ -442,10 +459,10 @@ function defaultAriaLabelRenderer(option: Value) {
 const nullComponent = () => null;
 
 const paddedComponent = (WrappedComponent: any) => {
-    return (props: {data: any}) => {
+    return (props: { data: any }) => {
         return (
-            <div style={{paddingLeft: '10px'}}>
-                <WrappedComponent {...props}/>
+            <div style={{ paddingLeft: '10px' }}>
+                <WrappedComponent {...props} />
             </div>
         );
     };
