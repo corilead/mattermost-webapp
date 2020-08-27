@@ -285,7 +285,7 @@ export class RenameChannelModal extends React.PureComponent {
                             />
                             {displayNameError}
                         </div>
-                        <div className='form-group'>
+                        {/* <div className='form-group'>
                             <label className='control-label'>{urlInputLabel}</label>
 
                             <div className={urlInputClass}>
@@ -309,7 +309,7 @@ export class RenameChannelModal extends React.PureComponent {
                             </div>
                             {urlHelpText}
                             {urlErrors}
-                        </div>
+                        </div> */}
                         {serverError}
                     </Modal.Body>
                     <Modal.Footer>
