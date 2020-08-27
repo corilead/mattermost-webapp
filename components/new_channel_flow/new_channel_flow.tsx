@@ -2,17 +2,18 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
-import {ChannelType, Channel} from 'mattermost-redux/types/channels';
-import {ServerError} from 'mattermost-redux/types/errors';
+import { ChannelType, Channel } from 'mattermost-redux/types/channels';
+import { ServerError } from 'mattermost-redux/types/errors';
 
 import Constants from 'utils/constants';
 import * as Utils from 'utils/utils';
-import {cleanUpUrlable} from 'utils/url';
 
 import NewChannelModal from 'components/new_channel_modal';
 import ChangeURLModal from 'components/change_url_modal';
+
+import uuid from 'utils/uuid';
 
 export const SHOW_NEW_CHANNEL = 1;
 export const SHOW_EDIT_URL = 2;
@@ -62,7 +63,7 @@ export type Props = {
     canCreatePrivateChannel: boolean;
 
     actions: {
-        createChannel: (channel: Channel) => Promise<{data: Channel; error?: ServerError}>;
+        createChannel: (channel: Channel) => Promise<{ data: Channel; error?: ServerError }>;
         switchToChannel: (channel: Channel) => Promise<{}>;
     };
 };
@@ -75,6 +76,7 @@ type State = {
     channelName: string;
     channelPurpose: string;
     channelHeader: string;
+    secretLevel: string;
     nameModified: boolean;
     show: boolean;
 }
@@ -83,6 +85,7 @@ type NewChannelData = {
     displayName: string;
     purpose: string;
     header: string;
+    secretLevel: string;
 }
 
 export default class NewChannelFlow extends React.PureComponent<Props, State> {
@@ -102,12 +105,13 @@ export default class NewChannelFlow extends React.PureComponent<Props, State> {
                 channelName: '',
                 channelPurpose: '',
                 channelHeader: '',
+                secretLevel: '',
                 nameModified: false,
                 show: props.show,
             };
         }
 
-        return {show: props.show};
+        return { show: props.show };
     }
 
     public constructor(props: Props) {
@@ -121,6 +125,7 @@ export default class NewChannelFlow extends React.PureComponent<Props, State> {
             channelName: '',
             channelPurpose: '',
             channelHeader: '',
+            secretLevel: '',
             nameModified: false,
             show: props.show,
         };
@@ -128,23 +133,18 @@ export default class NewChannelFlow extends React.PureComponent<Props, State> {
 
     onSubmit = () => {
         if (!this.state.channelDisplayName) {
-            this.setState({serverError: Utils.localizeMessage('channel_flow.invalidName', 'Invalid Channel Name')});
+            this.setState({ serverError: Utils.localizeMessage('channel_flow.invalidName', 'Invalid Channel Name') });
             return;
         }
 
-        if (this.state.channelName.length < 2) {
-            this.setState({flowState: SHOW_EDIT_URL_THEN_COMPLETE});
-            return;
-        }
-
-        const {actions, currentTeamId} = this.props;
+        const { actions, currentTeamId } = this.props;
         const channel: Channel = {
             team_id: currentTeamId,
-            name: this.state.channelName,
+            name: uuid(),
             display_name: this.state.channelDisplayName,
             purpose: this.state.channelPurpose,
             header: this.state.channelHeader,
-            type: this.state.channelType,
+            type: 'P',
             create_at: 0,
             creator_id: '',
             delete_at: 0,
@@ -157,7 +157,7 @@ export default class NewChannelFlow extends React.PureComponent<Props, State> {
             update_at: 0,
         };
 
-        actions.createChannel(channel).then((result: {data: Channel; error?: ServerError}) => {
+        actions.createChannel(channel).then((result: { data: Channel; error?: ServerError }) => {
             if (result.error) {
                 this.onCreateChannelError(result.error);
                 return;
@@ -180,9 +180,9 @@ export default class NewChannelFlow extends React.PureComponent<Props, State> {
                 ),
             });
         } else if (err.server_error_id === 'store.sql_channel.update.exists.app_error') {
-            this.setState({serverError: Utils.localizeMessage('channel_flow.alreadyExist', 'A channel with that URL already exists')});
+            this.setState({ serverError: Utils.localizeMessage('channel_flow.alreadyExist', 'A channel with that URL already exists') });
         } else {
-            this.setState({serverError: err.message});
+            this.setState({ serverError: err.message });
         }
     };
 
@@ -197,19 +197,19 @@ export default class NewChannelFlow extends React.PureComponent<Props, State> {
         if (e) {
             e.preventDefault();
         }
-        this.setState({flowState: SHOW_EDIT_URL});
+        this.setState({ flowState: SHOW_EDIT_URL });
     };
 
     urlChangeSubmitted = (newURL: string) => {
         if (this.state.flowState === SHOW_EDIT_URL_THEN_COMPLETE) {
-            this.setState({channelName: newURL, nameModified: true}, this.onSubmit);
+            this.setState({ channelName: newURL, nameModified: true }, this.onSubmit);
         } else {
-            this.setState({flowState: SHOW_NEW_CHANNEL, serverError: null, channelName: newURL, nameModified: true});
+            this.setState({ flowState: SHOW_NEW_CHANNEL, serverError: null, channelName: newURL, nameModified: true });
         }
     };
 
     urlChangeDismissed = () => {
-        this.setState({flowState: SHOW_NEW_CHANNEL});
+        this.setState({ flowState: SHOW_NEW_CHANNEL });
     };
 
     channelDataChanged = (data: NewChannelData) => {
@@ -217,10 +217,8 @@ export default class NewChannelFlow extends React.PureComponent<Props, State> {
             channelDisplayName: data.displayName,
             channelPurpose: data.purpose,
             channelHeader: data.header,
+            secretLevel: data.secretLevel,
         });
-        if (!this.state.nameModified) {
-            this.setState({channelName: cleanUpUrlable(data.displayName.trim())});
-        }
     };
 
     render() {
@@ -229,6 +227,7 @@ export default class NewChannelFlow extends React.PureComponent<Props, State> {
             displayName: this.state.channelDisplayName,
             purpose: this.state.channelPurpose,
             header: this.state.channelHeader,
+            secretLevel: this.state.secretLevel,
         };
 
         let showChannelModal = false;
@@ -240,8 +239,7 @@ export default class NewChannelFlow extends React.PureComponent<Props, State> {
         // Only listen to flow state if we are being shown
         if (this.props.show) {
             switch (this.state.flowState) {
-            case SHOW_NEW_CHANNEL:
-                showChannelModal = true;
+            case SHOW_NEW_CHANNEL: showChannelModal = true;
                 break;
             case SHOW_EDIT_URL:
                 showChangeURLModal = true;

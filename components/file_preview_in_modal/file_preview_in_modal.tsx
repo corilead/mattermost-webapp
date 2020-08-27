@@ -116,7 +116,7 @@ export default class FilePreview extends React.PureComponent<Props> {
                                         this.handleChangeSecretLevel(info.id, e);
                                     }}
                                 >
-                                    <option value={undefined}>未指定</option>
+                                    <option value={undefined}>&nbsp;</option>
                                     <option value='非密'>非密</option>
                                     <option value='内部'>内部</option>
                                     <option value='秘密'>秘密</option>

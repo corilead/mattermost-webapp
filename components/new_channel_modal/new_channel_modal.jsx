@@ -10,7 +10,6 @@ import GlobeIcon from 'components/widgets/icons/globe_icon';
 import LockIcon from 'components/widgets/icons/lock_icon';
 import LocalizedInput from 'components/localized_input/localized_input';
 import Constants from 'utils/constants.jsx';
-import { getShortenedURL } from 'utils/url';
 import * as Utils from 'utils/utils.jsx';
 import { t } from 'utils/i18n.jsx';
 
@@ -104,7 +103,6 @@ export default class NewChannelModal extends React.PureComponent {
         };
 
         this.channelHeaderInput = React.createRef();
-        this.channelPurposeInput = React.createRef();
         this.displayNameInput = React.createRef();
         this.secretLevelInput = React.createRef();
     }
@@ -129,6 +127,11 @@ export default class NewChannelModal extends React.PureComponent {
             this.setState({ displayNameError: true });
             return;
         }
+        const secretLevel = this.secretLevelInput.current.value;
+        if (!secretLevel) {
+            this.setState({ secretLevelError: true });
+            return;
+        }
 
         this.props.onSubmitChannel();
     }
@@ -137,8 +140,7 @@ export default class NewChannelModal extends React.PureComponent {
         const newData = {
             displayName: this.displayNameInput.current.value,
             header: this.channelHeaderInput.current.value,
-            purpose: this.channelPurposeInput.current.value,
-            secretLevel: this.channelPurposeInput.current.value,
+            secretLevel: this.secretLevelInput.current.value,
         };
         this.props.onDataChanged(newData);
     }
@@ -164,6 +166,7 @@ export default class NewChannelModal extends React.PureComponent {
         const enableTypeSelection = canCreatePublicChannel && canCreatePrivateChannel;
         var displayNameError = null;
         var serverError = null;
+        var secretLevelError = null;
         var displayNameClass = 'form-group';
 
         if (this.state.displayNameError) {
@@ -172,6 +175,19 @@ export default class NewChannelModal extends React.PureComponent {
                     <FormattedMessage
                         id='channel_modal.displayNameError'
                         defaultMessage='Display name must have at least 2 characters.'
+                    />
+                    {this.state.displayNameError}
+                </p>
+            );
+            displayNameClass += ' has-error';
+        }
+
+        if (this.state.secretLevelError) {
+            secretLevelError = (
+                <p className='input__help error'>
+                    <FormattedMessage
+                        id='channel_modal.secretLevelError'
+                        defaultMessage='SecretLevel is required.'
                     />
                     {this.state.displayNameError}
                 </p>
@@ -268,8 +284,6 @@ export default class NewChannelModal extends React.PureComponent {
             );
         }
 
-        const prettyTeamURL = getShortenedURL();
-
         return (
             <span>
                 <Modal
@@ -308,7 +322,7 @@ export default class NewChannelModal extends React.PureComponent {
                         className='form-horizontal'
                     >
                         <Modal.Body>
-                            <div className='form-group'>
+                            <div className='form-group' style={{ display: 'none' }}>
                                 <label
                                     className='col-sm-3 form__label control-label'
                                     id='channelModalTypeLabel'
@@ -346,19 +360,6 @@ export default class NewChannelModal extends React.PureComponent {
                                         onKeyDown={this.onEnterKeyDown}
                                     />
                                     {displayNameError}
-                                    <p className='input__help dark'>
-                                        {'URL: ' + prettyTeamURL + this.props.channelData.name + ' ('}
-                                        <button
-                                            className='color--link style--none'
-                                            onClick={this.handleOnURLChange}
-                                        >
-                                            <FormattedMessage
-                                                id='channel_modal.edit'
-                                                defaultMessage='Edit'
-                                            />
-                                        </button>
-                                        {')'}
-                                    </p>
                                 </div>
                             </div>
                             <div className='form-group'>
@@ -379,52 +380,16 @@ export default class NewChannelModal extends React.PureComponent {
                                         className='form-control'
                                         ref={this.secretLevelInput}
                                         style={{ width: 100 }}
-                                        value={this.props.channelData.purpose}
+                                        value={this.props.channelData.secretLevel}
                                         onChange={this.handleChange}
                                     >
-                                        <option value={undefined}>未指定</option>
+                                        <option value={undefined}>{undefined}</option>
                                         <option value='非密'>非密</option>
                                         <option value='内部'>内部</option>
                                         <option value='秘密'>秘密</option>
                                         <option value='机密'>机密</option>
                                     </select>
-                                </div>
-                            </div>
-                            <div className='form-group'>
-                                <div className='col-sm-3'>
-                                    <label
-                                        className='form__label control-label'
-                                        htmlFor='newChannelPurpose'
-                                    >
-                                        <FormattedMessage
-                                            id='channel_modal.purpose'
-                                            defaultMessage='Purpose'
-                                        />
-                                    </label>
-                                    <label className='form__label light'>
-                                        <FormattedMessage
-                                            id='channel_modal.optional'
-                                            defaultMessage='(optional)'
-                                        />
-                                    </label>
-                                </div>
-                                <div className='col-sm-9'>
-                                    <textarea
-                                        id='newChannelPurpose'
-                                        className='form-control no-resize'
-                                        ref={this.channelPurposeInput}
-                                        rows='4'
-                                        placeholder={Utils.localizeMessage('channel_modal.purposeEx', 'E.g.: "A channel to file bugs and improvements"')}
-                                        maxLength='250'
-                                        value={this.props.channelData.purpose}
-                                        onChange={this.handleChange}
-                                    />
-                                    <p className='input__help'>
-                                        <FormattedMessage
-                                            id='channel_modal.descriptionHelp'
-                                            defaultMessage='Describe how this channel should be used.'
-                                        />
-                                    </p>
+                                    {secretLevelError}
                                 </div>
                             </div>
                             <div className='form-group less'>
