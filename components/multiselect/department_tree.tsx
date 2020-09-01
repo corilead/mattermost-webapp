@@ -4,6 +4,9 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import request from 'utils/request';
+
 import './department_tree.scss';
 
 interface Department {
@@ -135,7 +138,29 @@ const DepartmentTree: React.FunctionComponent<DepartmentTreeProps> = (props) => 
     );
 };
 
-const depts: Department[] = [{ id: '1', name: 'dept1' }, { id: '2', name: 'dept2' }, { id: '3', name: 'dept3', children: [{ id: '11', name: 'dept11' }, { id: '12', name: 'dept12', children: [{ id: '111', name: 'dept111' }, { id: '112', name: 'dept112' }] }] }];
-const tree = [{ id: '0', name: '所有部门', children: depts }];
-export default () => <DepartmentTree departments={tree} />;
+export default () => {
+    const [departments, setdepartments] = useState([] as Department[]);
+
+    // useEffect(() => {
+    //     let unmounted = false;
+    //     (async () => {
+    //         const res = await request({ url: '' });
+    //         if (res && Array.isArray(res) && !unmounted) {
+    //             const tree = [{ id: '0', name: '所有部门', children: res }];
+    //             setdepartments(tree);
+    //         }
+    //     })();
+
+    //     return () => {
+    //         unmounted = true;
+    //     };
+    // }, []);
+
+    useEffect(() => {
+        const depts: Department[] = [{ id: '1', name: 'dept1' }, { id: '2', name: 'dept2' }, { id: '3', name: 'dept3', children: [{ id: '11', name: 'dept11' }, { id: '12', name: 'dept12', children: [{ id: '111', name: 'dept111' }, { id: '112', name: 'dept112' }] }] }];
+        const tree = [{ id: '0', name: '所有部门', children: depts }];
+        setdepartments(tree);
+    }, []);
+    return <DepartmentTree departments={departments} />;
+};
 
