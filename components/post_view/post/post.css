@@ -25,6 +25,10 @@
     border: 1px solid transparent !important;
 }
 
+.post .post-image__columns .post-image__column {
+    margin: 0.5em 1em 0.5em 0 !important;
+}
+
 .post .post-image__columns .post-image__column:last-child {
     margin-right: 0;
 }
