@@ -1,5 +1,6 @@
 .post-message__text {
     display: inline-block;
+    color: #333 !important;
 }
 
 .has-post-message {

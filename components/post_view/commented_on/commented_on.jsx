@@ -10,6 +10,8 @@ import {stripMarkdown} from 'utils/markdown';
 
 import CommentedOnFilesMessage from 'components/post_view/commented_on_files_message';
 
+import './commented_on.scss';
+
 export default class CommentedOn extends PureComponent {
     static propTypes = {
         displayName: PropTypes.string,

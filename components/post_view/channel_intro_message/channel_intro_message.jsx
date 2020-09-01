@@ -24,6 +24,7 @@ import AddGroupsToTeamModal from 'components/add_groups_to_team_modal';
 
 import {getMonthLong} from 'utils/i18n.jsx';
 import * as Utils from 'utils/utils.jsx';
+import './channel_intro_message.scss';
 
 export default class ChannelIntroMessage extends React.PureComponent {
     static propTypes = {
