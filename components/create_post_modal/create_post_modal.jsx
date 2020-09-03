@@ -1380,7 +1380,12 @@ class CreatePost extends React.PureComponent {
                 show={this.props.show}
             >
                 <Modal.Header>
-                    <Modal.Title>填写文件密级</Modal.Title>
+                    <Modal.Title>
+                        <FormattedMessage
+                            id='create_post.set_secret_level'
+                            defaultMessage='Send Files'
+                        />
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body
                     className='file_preview_modal_body'
