@@ -20,6 +20,7 @@ const CollapseLhsButton = ({
         data-toggle='collapse'
         data-target='#sidebar-nav'
         onClick={toggleLhs}
+        style={window.location.search.embedded ? {display: 'none'} : {}}
     >
         <span className='sr-only'>
             <FormattedMessage

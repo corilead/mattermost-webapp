@@ -136,6 +136,7 @@ export default class NavbarInfoButton extends React.PureComponent {
                 rootClose={true}
             >
                 <button
+                    style={window.location.search.embedded ? {display: 'none'} : {}}
                     className='navbar-toggle navbar-right__icon navbar-info-button pull-right'
                     aria-label={Utils.localizeMessage('accessibility.button.Info', 'Info')}
                 >
