@@ -24,7 +24,7 @@ import { getTable, formatMarkdownTableMessage, formatGithubCodePaste, isGitHubCo
 import { intlShape } from 'utils/react_intl';
 import * as UserAgent from 'utils/user_agent';
 import * as Utils from 'utils/utils.jsx';
-import './create_post_modal.css';
+import './create_post_modal.scss';
 
 import EditChannelHeaderModal from 'components/edit_channel_header_modal';
 import EditChannelPurposeModal from 'components/edit_channel_purpose_modal';
@@ -1428,7 +1428,8 @@ class CreatePost extends React.PureComponent {
                                         <FormattedMessage
                                             id='create_post.can_not_send'
                                             defaultMessage='Can not send this message'
-                                        />:
+                                        />
+                                        :
                                     </strong>
                                     <FormattedMessage
                                         id='create_post.secret_level_error'

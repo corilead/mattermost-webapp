@@ -45,6 +45,8 @@ import TutorialTip from 'components/tutorial/tutorial_tip';
 import FormattedMarkdownMessage from 'components/formatted_markdown_message.jsx';
 import MessageSubmitError from 'components/message_submit_error';
 
+import './create_post.scss';
+
 const KeyCodes = Constants.KeyCodes;
 
 // Temporary fix for IE-11, see MM-13423
