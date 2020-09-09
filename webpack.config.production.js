@@ -1,0 +1,1 @@
+let publicPath = '/chat/static/';
