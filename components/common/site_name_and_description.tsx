@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 type Props = {
     customDescriptionText?: string;
@@ -37,6 +37,7 @@ export default class SiteNameAndDescription extends React.PureComponent<Props> {
                 <h4
                     id='site_description'
                     className='color--light'
+                    style={{ display: 'none' }}
                 >
                     {description}
                 </h4>
