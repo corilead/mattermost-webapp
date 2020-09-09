@@ -3,9 +3,9 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
-import {ClientConfig} from 'mattermost-redux/types/config';
+import { ClientConfig } from 'mattermost-redux/types/config';
 
 type Props = {
     config: Partial<ClientConfig> | undefined;
@@ -57,7 +57,7 @@ export default class NotLoggedIn extends React.PureComponent<Props> {
                     rel='noopener noreferrer'
                     href={this.props.config.AboutLink}
                 >
-                    <FormattedMessage id='web.footer.about'/>
+                    <FormattedMessage id='web.footer.about' />
                 </a>,
             );
         }
@@ -72,7 +72,7 @@ export default class NotLoggedIn extends React.PureComponent<Props> {
                     rel='noopener noreferrer'
                     href={this.props.config.PrivacyPolicyLink}
                 >
-                    <FormattedMessage id='web.footer.privacy'/>
+                    <FormattedMessage id='web.footer.privacy' />
                 </a>,
             );
         }
@@ -87,7 +87,7 @@ export default class NotLoggedIn extends React.PureComponent<Props> {
                     rel='noopener noreferrer'
                     href={this.props.config.TermsOfServiceLink}
                 >
-                    <FormattedMessage id='web.footer.terms'/>
+                    <FormattedMessage id='web.footer.terms' />
                 </a>,
             );
         }
@@ -102,7 +102,7 @@ export default class NotLoggedIn extends React.PureComponent<Props> {
                     rel='noopener noreferrer'
                     href={this.props.config.HelpLink}
                 >
-                    <FormattedMessage id='web.footer.help'/>
+                    <FormattedMessage id='web.footer.help' />
                 </a>,
             );
         }
@@ -112,7 +112,7 @@ export default class NotLoggedIn extends React.PureComponent<Props> {
                 <div className='row content'>
                     {this.props.children}
                 </div>
-                <div className='row footer'>
+                <div className='row footer' style={{ display: 'none' }}>
                     <div
                         id='footer_section'
                         className='footer-pane col-xs-12'

@@ -3,20 +3,20 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {FormattedMessage, injectIntl} from 'react-intl';
-import {Link} from 'react-router-dom';
+import { FormattedMessage, injectIntl } from 'react-intl';
+import { Link } from 'react-router-dom';
 
-import {Client4} from 'mattermost-redux/client';
+import { Client4 } from 'mattermost-redux/client';
 
 import * as GlobalActions from 'actions/global_actions.jsx';
 import LocalStorageStore from 'stores/local_storage_store';
 
-import {browserHistory} from 'utils/browser_history';
+import { browserHistory } from 'utils/browser_history';
 import Constants from 'utils/constants.jsx';
-import {intlShape} from 'utils/react_intl';
+import { intlShape } from 'utils/react_intl';
 import * as Utils from 'utils/utils.jsx';
-import {showNotification} from 'utils/notifications';
-import {t} from 'utils/i18n.jsx';
+import { showNotification } from 'utils/notifications';
+import { t } from 'utils/i18n.jsx';
 
 import logoImage from 'images/logo.png';
 
@@ -118,7 +118,7 @@ class LoginController extends React.PureComponent {
                 // extra field in the querystring to signal the desktop app. And although eslint
                 // complains about this, it is allowed: https://reactjs.org/docs/react-component.html#componentdidmount.
                 // eslint-disable-next-line react/no-did-mount-set-state
-                this.setState({sessionExpired: true});
+                this.setState({ sessionExpired: true });
                 search.set('extra', Constants.SESSION_EXPIRED);
                 browserHistory.replace(`${this.props.location.pathname}?${search}`);
             }
@@ -186,7 +186,7 @@ class LoginController extends React.PureComponent {
         // Discard any session expiry notice once the user interacts with the login page.
         this.onDismissSessionExpired();
 
-        const {location} = this.props;
+        const { location } = this.props;
         const newQuery = location.search.replace(/(extra=password_change)&?/i, '');
         if (newQuery !== location.search) {
             browserHistory.replace(`${location.pathname}${newQuery}${location.hash}`);
@@ -198,7 +198,7 @@ class LoginController extends React.PureComponent {
         if (this.loginIdInput.current) {
             loginId = this.loginIdInput.current.value;
             if (loginId !== this.state.loginId) {
-                this.setState({loginId});
+                this.setState({ loginId });
             }
         }
 
@@ -206,7 +206,7 @@ class LoginController extends React.PureComponent {
         if (this.passwordInput.current) {
             password = this.passwordInput.current.value;
             if (password !== this.state.password) {
-                this.setState({password});
+                this.setState({ password });
             }
         }
 
@@ -263,9 +263,9 @@ class LoginController extends React.PureComponent {
     }
 
     submit = (loginId, password, token) => {
-        this.setState({serverError: null, loading: true});
+        this.setState({ serverError: null, loading: true });
 
-        this.props.actions.login(loginId, password, token).then(async ({error}) => {
+        this.props.actions.login(loginId, password, token).then(async ({ error }) => {
             if (error) {
                 if (error.server_error_id === 'api.user.login.not_verified.app_error') {
                     browserHistory.push('/should_verify_email?&email=' + encodeURIComponent(loginId));
@@ -293,9 +293,9 @@ class LoginController extends React.PureComponent {
                         ),
                     });
                 } else if (!this.state.showMfa && error.server_error_id === 'mfa.validate_token.authenticate.app_error') {
-                    this.setState({showMfa: true});
+                    this.setState({ showMfa: true });
                 } else {
-                    this.setState({showMfa: false, serverError: error.message, loading: false});
+                    this.setState({ showMfa: false, serverError: error.message, loading: false });
                 }
 
                 return;
@@ -307,7 +307,7 @@ class LoginController extends React.PureComponent {
             const inviteId = params.get('id') || '';
 
             if (inviteId || inviteToken) {
-                const {data: team} = await this.props.actions.addUserToTeamFromInvite(inviteToken, inviteId);
+                const { data: team } = await this.props.actions.addUserToTeamFromInvite(inviteToken, inviteId);
                 if (team) {
                     this.finishSignin(team);
                 } else {
@@ -354,14 +354,14 @@ class LoginController extends React.PureComponent {
     }
 
     handleBrandImageError = () => {
-        this.setState({brandImageError: true});
+        this.setState({ brandImageError: true });
     }
 
     createCustomLogin = () => {
         if (this.props.enableCustomBrand) {
             const text = this.props.customBrandText || '';
             const brandImageUrl = Client4.getBrandImageUrl(0);
-            const brandImageStyle = this.state.brandImageError ? {display: 'none'} : {};
+            const brandImageStyle = this.state.brandImageError ? { display: 'none' } : {};
 
             return (
                 <div>
@@ -375,8 +375,10 @@ class LoginController extends React.PureComponent {
                         <Markdown
                             message={text}
                             options={
-                                {mentions: false,
-                                    imagesMetadata: null}
+                                {
+                                    mentions: false,
+                                    imagesMetadata: null
+                                }
                             }
                         />
                     </div>
@@ -432,7 +434,7 @@ class LoginController extends React.PureComponent {
 
     onDismissSessionExpired = () => {
         LocalStorageStore.setWasLoggedIn(false);
-        this.setState({sessionExpired: false});
+        this.setState({ sessionExpired: false });
     }
 
     createExtraText = () => {
@@ -441,7 +443,7 @@ class LoginController extends React.PureComponent {
         if (this.state.sessionExpired) {
             return (
                 <div className='alert alert-warning'>
-                    <WarningIcon/>
+                    <WarningIcon />
                     {' '}
                     <FormattedMessage
                         id='login.session_expired'
@@ -475,7 +477,7 @@ class LoginController extends React.PureComponent {
         } else if (extraParam === Constants.TERMS_REJECTED) {
             return (
                 <div className='alert alert-warning'>
-                    <WarningIcon/>
+                    <WarningIcon />
                     <FormattedMarkdownMessage
                         id='login.terms_rejected'
                         defaultMessage='You must agree to the terms of service before accessing {siteName}. Please contact your System Administrator for more details.'
@@ -488,7 +490,7 @@ class LoginController extends React.PureComponent {
         } else if (extraParam === Constants.SIGNIN_CHANGE) {
             return (
                 <div className='alert alert-success'>
-                    <SuccessIcon/>
+                    <SuccessIcon />
                     <FormattedMessage
                         id='login.changed'
                         defaultMessage=' Sign-in method changed successfully'
@@ -498,7 +500,7 @@ class LoginController extends React.PureComponent {
         } else if (extraParam === Constants.SIGNIN_VERIFIED) {
             return (
                 <div className='alert alert-success'>
-                    <SuccessIcon/>
+                    <SuccessIcon />
                     <FormattedMessage
                         id='login.verified'
                         defaultMessage=' Email Verified'
@@ -511,7 +513,7 @@ class LoginController extends React.PureComponent {
                     id='passwordUpdatedSuccess'
                     className='alert alert-success'
                 >
-                    <SuccessIcon/>
+                    <SuccessIcon />
                     <FormattedMessage
                         id='login.passwordChanged'
                         defaultMessage=' Password updated successfully'
@@ -583,7 +585,7 @@ class LoginController extends React.PureComponent {
                                 name='password'
                                 value={this.state.password}
                                 onChange={this.handlePasswordChange}
-                                placeholder={{id: t('login.password'), defaultMessage: 'Password'}}
+                                placeholder={{ id: t('login.password'), defaultMessage: 'Password' }}
                                 spellCheck='false'
                             />
                         </div>
@@ -638,18 +640,19 @@ class LoginController extends React.PureComponent {
 
         if (usernameSigninEnabled || emailSigninEnabled) {
             loginControls.push(
-                <div
-                    id='login_forgot'
-                    key='forgotPassword'
-                    className='form-group'
-                >
-                    <Link to={'/reset_password'}>
-                        <FormattedMessage
-                            id='login.forgot'
-                            defaultMessage='I forgot my password.'
-                        />
-                    </Link>
-                </div>,
+                <div style={{ display: 'none' }}>
+                    <div
+                        id='login_forgot'
+                        key='forgotPassword'
+                        className='form-group'
+                    >
+                        <Link to={'/reset_password'}>
+                            <FormattedMessage
+                                id='login.forgot'
+                                defaultMessage='I forgot my password.'
+                            />
+                        </Link>
+                    </div></div>,
             );
         }
 
@@ -684,7 +687,7 @@ class LoginController extends React.PureComponent {
                     href={Client4.getOAuthRoute() + '/uaa/login' + this.props.location.search}
                 >
                     <span>
-                        <span className='icon'/>
+                        <span className='icon' />
                         <span>
                             <FormattedMessage
                                 id='login.uaa'
@@ -704,7 +707,7 @@ class LoginController extends React.PureComponent {
                     href={Client4.getOAuthRoute() + '/gitlab/login' + this.props.location.search}
                 >
                     <span>
-                        <span className='icon'/>
+                        <span className='icon' />
                         <span>
                             <FormattedMessage
                                 id='login.gitlab'
@@ -724,7 +727,7 @@ class LoginController extends React.PureComponent {
                     href={Client4.getOAuthRoute() + '/google/login' + this.props.location.search}
                 >
                     <span>
-                        <span className='icon'/>
+                        <span className='icon' />
                         <span>
                             <FormattedMessage
                                 id='login.google'
@@ -744,7 +747,7 @@ class LoginController extends React.PureComponent {
                     href={Client4.getOAuthRoute() + '/office365/login' + this.props.location.search}
                 >
                     <span>
-                        <span className='icon'/>
+                        <span className='icon' />
                         <span>
                             <FormattedMessage
                                 id='login.office365'
@@ -800,7 +803,7 @@ class LoginController extends React.PureComponent {
     }
 
     hideMfa = () => {
-        this.setState({showMfa: false});
+        this.setState({ showMfa: false });
     }
 
     render() {
@@ -811,7 +814,7 @@ class LoginController extends React.PureComponent {
         } = this.props;
 
         if (initializing) {
-            return (<LoadingScreen/>);
+            return (<LoadingScreen />);
         }
 
         let content;
@@ -826,7 +829,7 @@ class LoginController extends React.PureComponent {
                     submit={this.submit}
                 />
             );
-            backButton = (<BackButton onClick={this.hideMfa}/>);
+            backButton = (<BackButton onClick={this.hideMfa} />);
         } else {
             content = this.createLoginOptions();
             customContent = this.createCustomLogin();
@@ -837,7 +840,7 @@ class LoginController extends React.PureComponent {
 
         return (
             <div>
-                <AnnouncementBar/>
+                <AnnouncementBar />
                 {backButton}
                 <div
                     id='login_section'
