@@ -130,6 +130,8 @@ if (DEV) {
     if (siteURL) {
         publicPath = path.join(new url.URL(siteURL).pathname, 'static') + '/';
     }
+} else {
+  publicPath = '/chat/static/';
 }
 
 var config = {
