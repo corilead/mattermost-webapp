@@ -22,7 +22,7 @@ import BotBadge from 'components/widgets/badges/bot_badge';
 import GroupMessageOption from './group_message_option';
 
 const USERS_PER_PAGE = 50;
-const MAX_SELECTABLE_VALUES = Constants.MAX_USERS_IN_GM - 1;
+const MAX_SELECTABLE_VALUES = 1;
 
 type UserProfileValue = (UserProfile & Value);
 type GroupChannelValue = (Channel & Value & {profiles: UserProfile[]});

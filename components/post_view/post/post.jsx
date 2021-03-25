@@ -17,7 +17,7 @@ import PostHeader from 'components/post_view/post_header';
 import PostContext from 'components/post_view/post_context';
 import PostPreHeader from 'components/post_view/post_pre_header';
 
-import './post.css';
+import './post.scss';
 
 class Post extends React.PureComponent {
     static propTypes = {
@@ -360,7 +360,8 @@ class Post extends React.PureComponent {
         if (this.props.center) {
             centerClass = 'center';
         }
-
+        const postClassName = this.getClassName(post, isSystemMessage, isMeMessage, fromWebhook, fromAutoResponder, fromBot);
+        const isCurrentUser = postClassName.indexOf('current--user') >= 0;
         return (
             <PostContext.Provider value={{ handlePopupOpened: this.handleDropdownOpened }}>
                 <div
@@ -368,7 +369,7 @@ class Post extends React.PureComponent {
                     id={'post_' + post.id}
                     data-testid='postView'
                     role='listitem'
-                    className={`a11y__section ${this.getClassName(post, isSystemMessage, isMeMessage, fromWebhook, fromAutoResponder, fromBot)}`}
+                    className={`a11y__section ${postClassName}`}
                     tabIndex='0'
                     onFocus={this.handlePostFocus}
                     onBlur={this.removeFocus}
@@ -390,9 +391,11 @@ class Post extends React.PureComponent {
                         className={'post__content ' + centerClass}
                         aria-hidden={this.state.ariaHidden}
                     >
-                        <div className='post__img'>
-                            {profilePic}
-                        </div>
+                        {!isCurrentUser &&
+                            <div className='post__img'>
+                                {profilePic}
+                            </div>
+                        }
                         <div>
                             <PostHeader
                                 post={post}
@@ -414,6 +417,11 @@ class Post extends React.PureComponent {
                                 isFirstReply={this.props.isFirstReply}
                             />
                         </div>
+                        {isCurrentUser &&
+                            <div className='post__img'>
+                                {profilePic}
+                            </div>
+                        }
                     </div>
                 </div>
             </PostContext.Provider>
