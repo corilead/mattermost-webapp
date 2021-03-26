@@ -5,20 +5,20 @@
 import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {FormattedMessage, injectIntl} from 'react-intl';
-import {PropTypes} from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
+import { PropTypes } from 'prop-types';
 import classNames from 'classnames';
 
 import Scrollbars from 'react-custom-scrollbars';
-import {SpringSystem, MathUtil} from 'rebound';
+import { SpringSystem, MathUtil } from 'rebound';
 
-import {trackEvent} from 'actions/diagnostics_actions.jsx';
-import {redirectUserToDefaultTeam} from 'actions/global_actions';
+import { trackEvent } from 'actions/diagnostics_actions.jsx';
+import { redirectUserToDefaultTeam } from 'actions/global_actions';
 import * as ChannelUtils from 'utils/channel_utils.jsx';
-import {Constants, ModalIdentifiers, SidebarChannelGroups} from 'utils/constants';
-import {intlShape} from 'utils/react_intl';
+import { Constants, ModalIdentifiers, SidebarChannelGroups } from 'utils/constants';
+import { intlShape } from 'utils/react_intl';
 import * as Utils from 'utils/utils.jsx';
-import {t} from 'utils/i18n';
+import { t } from 'utils/i18n';
 
 import DataPrefetch from 'components/data_prefetch';
 import MoreChannels from 'components/more_channels';
@@ -182,7 +182,7 @@ class LegacySidebar extends React.PureComponent {
         this.animate = new SpringSystem();
         this.scrollAnimation = this.animate.createSpring();
         this.scrollAnimation.setOvershootClampingEnabled(true); // disables the spring action at the end of animation
-        this.scrollAnimation.addListener({onSpringUpdate: this.handleScrollAnimationUpdate});
+        this.scrollAnimation.addListener({ onSpringUpdate: this.handleScrollAnimationUpdate });
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -195,7 +195,7 @@ class LegacySidebar extends React.PureComponent {
         }
 
         if (nextProps.orderedChannelIds !== prevState.orderedChannelIds) {
-            return {orderedChannelIds: nextProps.orderedChannelIds};
+            return { orderedChannelIds: nextProps.orderedChannelIds };
         }
 
         return null;
@@ -254,8 +254,8 @@ class LegacySidebar extends React.PureComponent {
     }
 
     setFirstAndLastUnreadChannels() {
-        const {currentChannel, unreadChannelIds} = this.props;
-        const {orderedChannelIds} = this.state;
+        const { currentChannel, unreadChannelIds } = this.props;
+        const { orderedChannelIds } = this.state;
 
         this.getDisplayedChannels(orderedChannelIds).map((channelId) => {
             if (channelId !== currentChannel.id && unreadChannelIds.includes(channelId)) {
@@ -282,7 +282,7 @@ class LegacySidebar extends React.PureComponent {
     }
 
     handleScrollAnimationUpdate = (spring) => {
-        const {scrollbar} = this.refs;
+        const { scrollbar } = this.refs;
         const val = spring.getCurrentValue();
         scrollbar.scrollTop(val);
     }
@@ -460,12 +460,12 @@ class LegacySidebar extends React.PureComponent {
     }
 
     showMorePublicDirectChannelsModal = () => {
-        this.setState({showMorePublicChannelsModal: true});
+        this.setState({ showMorePublicChannelsModal: true });
         trackEvent('ui', 'ui_channels_more_public_direct');
     }
 
     hideMorePublicDirectChannelsModal = () => {
-        this.setState({showMorePublicChannelsModal: false});
+        this.setState({ showMorePublicChannelsModal: false });
     }
 
     onHandleNewChannel = () => {
@@ -474,12 +474,12 @@ class LegacySidebar extends React.PureComponent {
     }
 
     showMoreChannelsModal = (type) => {
-        this.setState({showMoreChannelsModal: true, morePublicChannelsModalType: type});
+        this.setState({ showMoreChannelsModal: true, morePublicChannelsModalType: type });
         trackEvent('ui', 'ui_channels_more_public');
     }
 
     hideMoreChannelsModal = () => {
-        this.setState({showMoreChannelsModal: false});
+        this.setState({ showMoreChannelsModal: false });
     }
 
     showNewPublicChannelModal = () => {
@@ -493,20 +493,20 @@ class LegacySidebar extends React.PureComponent {
     }
 
     showNewChannelModal = (type) => {
-        this.setState({newChannelModalType: type});
+        this.setState({ newChannelModalType: type });
     }
 
     hideNewChannelModal = () => {
-        this.setState({newChannelModalType: ''});
+        this.setState({ newChannelModalType: '' });
     }
 
     showMoreDirectChannelsModal = () => {
         trackEvent('ui', 'ui_channels_more_direct');
-        this.setState({showDirectChannelsModal: true});
+        this.setState({ showDirectChannelsModal: true });
     }
 
     hideMoreDirectChannelsModal = () => {
-        this.setState({showDirectChannelsModal: false});
+        this.setState({ showDirectChannelsModal: false });
     }
 
     openQuickSwitcher = (e) => {
@@ -534,8 +534,7 @@ class LegacySidebar extends React.PureComponent {
     }
 
     renderOrderedChannels = () => {
-        const {orderedChannelIds} = this.state;
-
+        const { orderedChannelIds } = this.state;
         const sectionsToHide = [SidebarChannelGroups.UNREADS, SidebarChannelGroups.FAVORITE];
 
         return (
@@ -548,7 +547,7 @@ class LegacySidebar extends React.PureComponent {
                 renderThumbVertical={renderThumbVertical}
                 renderView={renderView}
                 onScroll={this.onScroll}
-                style={{position: 'absolute'}}
+                style={{ position: 'absolute' }}
             >
                 <div
                     id='sidebarChannelContainer'
@@ -638,7 +637,7 @@ class LegacySidebar extends React.PureComponent {
 
         // Check if we have all info needed to render
         if (currentTeam == null || currentUser == null) {
-            return (<div/>);
+            return (<div />);
         }
 
         // keep track of the first and last unread channels so we can use them to set the unread indicators
@@ -736,13 +735,13 @@ class LegacySidebar extends React.PureComponent {
 
         return (
             <div
-                className={classNames('sidebar--left', {'move--right': isOpen && Utils.isMobile()})}
+                className={classNames('sidebar--left', { 'move--right': isOpen && Utils.isMobile() })}
                 id='sidebar-left'
                 key='sidebar-left'
                 role='navigation'
                 aria-labelledby='sidebar-left'
             >
-                {isDataPrefechEnabled && <DataPrefetch/>}
+                {isDataPrefechEnabled && <DataPrefetch />}
                 <NewChannelFlow
                     show={showChannelModal}
                     canCreatePublicChannel={canCreatePublicChannel}
@@ -754,10 +753,10 @@ class LegacySidebar extends React.PureComponent {
                 {moreDirectChannelsModal}
                 {moreChannelsModal}
 
-                <SidebarHeader/>
+                <SidebarHeader />
 
                 <div className='sidebar--left__icons'>
-                    <Pluggable pluggableName='LeftSidebarHeader'/>
+                    <Pluggable pluggableName='LeftSidebarHeader' />
                 </div>
 
                 <div

@@ -4,12 +4,12 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {injectIntl} from 'react-intl';
+import { injectIntl } from 'react-intl';
 
-import {browserHistory} from 'utils/browser_history';
-import {Constants} from 'utils/constants';
-import {intlShape} from 'utils/react_intl';
-import {trackEvent} from 'actions/diagnostics_actions.jsx';
+import { browserHistory } from 'utils/browser_history';
+import { Constants } from 'utils/constants';
+import { intlShape } from 'utils/react_intl';
+import { trackEvent } from 'actions/diagnostics_actions.jsx';
 import * as GlobalActions from 'actions/global_actions.jsx';
 import SidebarChannelButtonOrLink from '../sidebar_channel_button_or_link/sidebar_channel_button_or_link.jsx';
 import SidebarTutorialTip from '../sidebar_tutorial_tip.jsx';
@@ -169,7 +169,7 @@ class SidebarChannel extends React.PureComponent {
     }
 
     handleLeavePrivateChannel = () => {
-        GlobalActions.showLeavePrivateChannelModal({id: this.props.channelId, display_name: this.props.channelDisplayName});
+        GlobalActions.showLeavePrivateChannelModal({ id: this.props.channelId, display_name: this.props.channelDisplayName });
         trackEvent('ui', 'ui_private_channel_x_button_clicked');
     }
 
@@ -189,7 +189,7 @@ class SidebarChannel extends React.PureComponent {
 
             const currentUserId = this.props.currentUserId;
             this.props.actions.leaveDirectChannel(this.props.channelName);
-            this.props.actions.savePreferences(currentUserId, [{user_id: currentUserId, category, name: id, value: 'false'}]).then(
+            this.props.actions.savePreferences(currentUserId, [{ user_id: currentUserId, category, name: id, value: 'false' }]).then(
                 () => {
                     this.isLeaving = false;
                 },
@@ -212,7 +212,7 @@ class SidebarChannel extends React.PureComponent {
             return null;
         }
         if (!this.props.channelDisplayName || !this.props.channelType) {
-            return (<div/>);
+            return (<div />);
         }
 
         let closeHandler = null;
@@ -323,7 +323,7 @@ class SidebarChannel extends React.PureComponent {
     }
 }
 
-const wrappedComponent = injectIntl(SidebarChannel, {forwardRef: true});
+const wrappedComponent = injectIntl(SidebarChannel, { forwardRef: true });
 wrappedComponent.displayName = 'injectIntl(SidebarChannel)';
 export default wrappedComponent;
 /* eslint-enable react/no-string-refs */

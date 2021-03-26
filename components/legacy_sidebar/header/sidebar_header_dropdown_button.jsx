@@ -1,11 +1,12 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
+/* eslint-disable camelcase */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Tooltip} from 'react-bootstrap';
+import { Tooltip } from 'react-bootstrap';
 
-import {localizeMessage} from 'utils/utils.jsx';
+import { localizeMessage } from 'utils/utils.jsx';
 import OverlayTrigger from 'components/overlay_trigger';
 import MenuIcon from 'components/widgets/icons/menu_icon';
 import Constants from 'utils/constants';
@@ -25,7 +26,7 @@ export default class SidebarHeaderDropdownButton extends React.PureComponent {
         let tutorialTip = null;
         if (this.props.showTutorialTip) {
             tutorialTip = (
-                <MenuTutorialTip onBottom={false}/>
+                <MenuTutorialTip onBottom={false} />
             );
         }
 
@@ -49,7 +50,13 @@ export default class SidebarHeaderDropdownButton extends React.PureComponent {
                 </OverlayTrigger>
             );
         }
-
+        const { username, last_name, first_name } = this.props.currentUser;
+        let showName;
+        if (!last_name && !first_name) {
+            showName = username;
+        } else {
+            showName = last_name + first_name;
+        }
         return (
             <div
                 className='SidebarHeaderDropdownButton'
@@ -65,13 +72,13 @@ export default class SidebarHeaderDropdownButton extends React.PureComponent {
                         id='headerUsername'
                         className='user__name'
                     >
-                        {'@' + this.props.currentUser.username}
+                        {'@' + showName}
                     </div>
                     <button
                         className='style--none sidebar-header-dropdown__icon'
                         aria-label={localizeMessage('navbar_dropdown.menuAriaLabel', 'main menu')}
                     >
-                        <MenuIcon/>
+                        <MenuIcon />
                     </button>
                 </div>
             </div>
