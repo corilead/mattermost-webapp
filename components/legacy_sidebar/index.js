@@ -34,11 +34,10 @@ function mapStateToProps(state) {
 
     let canCreatePublicChannel = false;
     let canCreatePrivateChannel = false;
-
-    if (currentTeam) {
-        canCreatePublicChannel = haveITeamPermission(state, {team: currentTeam.id, permission: Permissions.CREATE_PUBLIC_CHANNEL});
-        canCreatePrivateChannel = haveITeamPermission(state, {team: currentTeam.id, permission: Permissions.CREATE_PRIVATE_CHANNEL});
-    }
+    // if (currentTeam) {
+    //     canCreatePublicChannel = haveITeamPermission(state, {team: currentTeam.id, permission: Permissions.CREATE_PUBLIC_CHANNEL});
+    //     canCreatePrivateChannel = haveITeamPermission(state, {team: currentTeam.id, permission: Permissions.CREATE_PRIVATE_CHANNEL});
+    // }
 
     const sidebarPrefs = getSidebarPreferences(state);
     const lastUnreadChannel = state.views.channel.keepChannelIdAsUnread;

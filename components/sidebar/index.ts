@@ -32,11 +32,11 @@ function mapStateToProps(state: GlobalState) {
     let canCreatePrivateChannel = false;
     let canJoinPublicChannel = false;
 
-    if (currentTeam) {
-        canCreatePublicChannel = haveIChannelPermission(state, {channel: currentChannelId, team: currentTeam.id, permission: Permissions.CREATE_PUBLIC_CHANNEL});
-        canCreatePrivateChannel = haveIChannelPermission(state, {channel: currentChannelId, team: currentTeam.id, permission: Permissions.CREATE_PRIVATE_CHANNEL});
-        canJoinPublicChannel = haveIChannelPermission(state, {channel: currentChannelId, team: currentTeam.id, permission: Permissions.JOIN_PUBLIC_CHANNELS});
-    }
+    // if (currentTeam) {
+    //     canCreatePublicChannel = haveIChannelPermission(state, {channel: currentChannelId, team: currentTeam.id, permission: Permissions.CREATE_PUBLIC_CHANNEL});
+    //     canCreatePrivateChannel = haveIChannelPermission(state, {channel: currentChannelId, team: currentTeam.id, permission: Permissions.CREATE_PRIVATE_CHANNEL});
+    //     canJoinPublicChannel = haveIChannelPermission(state, {channel: currentChannelId, team: currentTeam.id, permission: Permissions.JOIN_PUBLIC_CHANNELS});
+    // }
 
     return {
         teamId: currentTeam ? currentTeam.id : '',
