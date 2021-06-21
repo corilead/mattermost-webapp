@@ -31,6 +31,7 @@ import EditChannelHeaderModal from 'components/edit_channel_header_modal';
 import EditChannelPurposeModal from 'components/edit_channel_purpose_modal';
 import CreatePostModal from 'components/create_post_modal';
 import EmojiPickerOverlay from 'components/emoji_picker/emoji_picker_overlay.jsx';
+import PresetPickerOverlay from 'components/preset_picker/preset_picker_overlay.jsx';
 import FilePreview from 'components/file_preview';
 import FileUpload from 'components/file_upload';
 import LocalizedIcon from 'components/localized_icon';
@@ -38,6 +39,7 @@ import MsgTyping from 'components/msg_typing';
 import PostDeletedModal from 'components/post_deleted_modal';
 import ResetStatusModal from 'components/reset_status_modal';
 import EmojiIcon from 'components/widgets/icons/emoji_icon';
+import PresetIcon from 'components/widgets/icons/preset_icon';
 import Textbox from 'components/textbox';
 import TextboxLinks from 'components/textbox/textbox_links';
 import TutorialTip from 'components/tutorial/tutorial_tip';
@@ -48,6 +50,8 @@ import MessageSubmitError from 'components/message_submit_error';
 import './create_post.scss';
 
 const KeyCodes = Constants.KeyCodes;
+
+const messageInputDisabled = true;
 
 // Temporary fix for IE-11, see MM-13423
 function trimRight(str) {
@@ -316,6 +320,7 @@ class CreatePost extends React.PureComponent {
             submitting: false,
             showPostDeletedModal: false,
             showEmojiPicker: false,
+            showPresetPicker: false,
             showConfirmModal: false,
             channelTimezoneCount: 0,
             uploadsProgressPercent: {},
@@ -432,8 +437,16 @@ class CreatePost extends React.PureComponent {
         this.setState({ showEmojiPicker: !this.state.showEmojiPicker });
     }
 
+    togglePresetPicker = () => {
+        this.setState({ showPresetPicker: !this.state.showPresetPicker });
+    }
+
     hideEmojiPicker = () => {
         this.handleEmojiClose();
+    }
+
+    hidePresetPicker = () => {
+        this.handlePresetClose();
     }
 
     doSubmit = async (e) => {
@@ -779,7 +792,6 @@ class CreatePost extends React.PureComponent {
 
             this.setShowPreview(false);
         }
-
         this.emitTypingEvent();
     }
 
@@ -789,7 +801,6 @@ class CreatePost extends React.PureComponent {
     }
 
     handleChange = (e) => {
-        const message = e.target.value;
         const channelId = this.props.currentChannel.id;
 
         let serverError = this.state.serverError;
@@ -1028,6 +1039,8 @@ class CreatePost extends React.PureComponent {
     }
 
     handleKeyDown = (e) => {
+        if (messageInputDisabled)
+            return;
         const ctrlOrMetaKeyPressed = e.ctrlKey || e.metaKey;
         const messageIsEmpty = this.state.message.length === 0;
         const draftMessageIsEmpty = this.props.draft.message.length === 0;
@@ -1130,6 +1143,10 @@ class CreatePost extends React.PureComponent {
         this.setState({ showEmojiPicker: false });
     }
 
+    handlePresetClose = () => {
+        this.setState({ showPresetPicker: false });
+    }
+
     setMessageAndCaretPostion = (newMessage, newCaretPosition) => {
         const textbox = this.refs.textbox.getInputBox();
 
@@ -1163,6 +1180,13 @@ class CreatePost extends React.PureComponent {
         }
 
         this.handleEmojiClose();
+    }
+
+    handleSelectPreset = (e, word) => {
+
+        if (word) this.setState({ message: word }, () => { this.handleSubmit(e) })
+
+        this.handlePresetClose();
     }
 
     handleGifClick = (gif) => {
@@ -1440,6 +1464,37 @@ class CreatePost extends React.PureComponent {
             );
         }
 
+        let presetPicker = null;
+        const presetButtonAriaLabel = formatMessage({ id: 'preset_picker.presetPicker', defaultMessage: 'Preset Picker' }).toLowerCase();
+
+        if (!readOnlyChannel && !this.props.shouldShowPreview) {
+            presetPicker = (
+                <div>
+                    <PresetPickerOverlay
+                        show={this.state.showPresetPicker}
+                        target={this.getCreatePostControls}
+                        onHide={this.hidePresetPicker}
+                        onSelect={this.handleSelectPreset}
+                        topOffset={-7}
+                    />
+                    <button
+                        type='button'
+                        aria-label={presetButtonAriaLabel}
+                        onClick={this.togglePresetPicker}
+                        className={classNames('preset-picker__container', 'post-action', {
+                            'post-action--active': this.state.showPresetPicker,
+                        })}
+                    >
+                        <PresetIcon
+                            id='presetPickerButton'
+                            className={'icon'}
+                        />
+                    </button>
+                </div>
+            );
+
+        }
+
         let createMessage;
         if (readOnlyChannel) {
             createMessage = Utils.localizeMessage('create_post.read_only', 'This channel is read-only. Only members with permission can post here.');
@@ -1502,6 +1557,7 @@ class CreatePost extends React.PureComponent {
                                 >
                                     {fileUpload}
                                     {emojiPicker}
+                                    {presetPicker}
                                     <a
                                         role='button'
                                         tabIndex='0'

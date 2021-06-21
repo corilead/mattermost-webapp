@@ -1750,6 +1750,7 @@
   "emoji_picker.search_emoji": "搜索表情符",
   "emoji_picker.searchResults": "搜索结果",
   "emoji_picker.symbols": "符号",
+  "preset_picker.presetPicker": "常用回复",
   "error.channel_not_found.message": "您请求的讨论组为非公开或不存在。请联系管理员以添加到讨论组。",
   "error.channel_not_found.title": "无找到讨论组",
   "error.channelNotFound.link": "回到{defaultChannelName}",

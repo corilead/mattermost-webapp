@@ -252,6 +252,12 @@
         width: 100%;
     }
 
+    .preset-picker__container {
+        min-height: 100%;
+        position: relative;
+        width: 100%;
+    }
+
     .emoji-picker__category-header {
         font-size: 12px;
         font-weight: bold;
