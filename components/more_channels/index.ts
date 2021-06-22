@@ -3,6 +3,7 @@
 
 import {connect} from 'react-redux';
 import {ActionCreatorsMapObject, bindActionCreators, Dispatch} from 'redux';
+
 import {createSelector} from 'reselect';
 
 import {RequestStatus} from 'mattermost-redux/constants';
@@ -15,17 +16,20 @@ import {getChannels, getArchivedChannels, joinChannel} from 'mattermost-redux/ac
 import {getOtherChannels, getChannelsInCurrentTeam} from 'mattermost-redux/selectors/entities/channels';
 
 import {searchMoreChannels} from 'actions/channel_actions.jsx';
+import {openModal, closeModal} from 'actions/views/modals';
 
 import {GlobalState} from '../../types/store';
 
 import MoreChannels from './more_channels';
 
 const getNotArchivedOtherChannels = createSelector(
+    'getNotArchivedOtherChannels',
     getOtherChannels,
     (channels: Channel[]) => channels && channels.filter((c) => c.delete_at === 0),
 );
 
 const getArchivedOtherChannels = createSelector(
+    'getArchivedOtherChannels',
     getChannelsInCurrentTeam,
     (channels: Channel[]) => channels && channels.filter((c) => c.delete_at !== 0),
 );
@@ -34,7 +38,7 @@ function mapStateToProps(state: GlobalState) {
     const team = getCurrentTeam(state) || {};
 
     return {
-        channels: getNotArchivedOtherChannels(state, null) || [],
+        channels: getNotArchivedOtherChannels(state) || [],
         archivedChannels: getArchivedOtherChannels(state) || [],
         currentUserId: getCurrentUserId(state),
         teamId: team.id,
@@ -49,6 +53,10 @@ type Actions = {
     getArchivedChannels: (teamId: string, page: number, channelsPerPage: number) => ActionFunc | void;
     joinChannel: (currentUserId: string, teamId: string, channelId: string) => Promise<ActionResult>;
     searchMoreChannels: (term: string, shouldShowArchivedChannels: boolean) => Promise<ActionResult>;
+    openModal: (modalData: {modalId: string; dialogType: any; dialogProps?: any}) => Promise<{
+        data: boolean;
+    }>;
+    closeModal: (modalId: string) => void;
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
@@ -58,6 +66,8 @@ function mapDispatchToProps(dispatch: Dispatch) {
             getArchivedChannels,
             joinChannel,
             searchMoreChannels,
+            openModal,
+            closeModal,
         }, dispatch),
     };
 }

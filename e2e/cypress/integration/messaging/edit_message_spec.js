@@ -99,7 +99,7 @@ describe('Edit Message', () => {
                 cy.get('#edit_textbox').type('Some text {enter}');
 
                 // * Edit modal should disappear
-                cy.get('.edit-modal').should('not.be.visible');
+                cy.get('.edit-modal').should('not.exist');
 
                 // # Mouseover the post again
                 cy.get(`#post_${postId}`).trigger('mouseover');
@@ -114,7 +114,7 @@ describe('Edit Message', () => {
                 cy.get('#rhsContainer').should('be.visible');
 
                 // * Check that the RHS timeStamp equals the original post timeStamp
-                cy.get(`#CENTER_time_${postId}`).find('time').invoke('attr', 'dateTime').should('be', originalTimeStamp);
+                cy.get(`#CENTER_time_${postId}`).find('time').invoke('attr', 'dateTime').should('equal', originalTimeStamp);
             });
         });
     });
@@ -145,7 +145,7 @@ describe('Edit Message', () => {
             // * Edit post modal should appear, and edit the post
             cy.get('#editPostModal').should('be.visible');
             cy.get('#edit_textbox').should('have.text', secondMessage).type(' Another new message{enter}');
-            cy.get('#editPostModal').should('be.not.visible');
+            cy.get('#editPostModal').should('not.exist');
 
             // * Check the second post and verify that it contains new edited message.
             cy.get(postText).should('have.text', `${secondMessage} Another new message`);

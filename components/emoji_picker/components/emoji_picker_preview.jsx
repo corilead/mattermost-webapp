@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
+
 import {getEmojiImageUrl} from 'mattermost-redux/utils/emoji_utils';
 
 import imgTrans from 'images/img_trans.gif';
@@ -21,10 +22,10 @@ export default class EmojiPickerPreview extends React.PureComponent {
             let aliases;
             let previewImage;
 
-            if (emoji.aliases && emoji.category && emoji.batch) {
+            if (emoji.short_names) {
                 // This is a system emoji which only has a list of aliases
-                name = emoji.aliases[0];
-                aliases = emoji.aliases;
+                name = emoji.short_names[0];
+                aliases = emoji.short_names;
 
                 previewImage = (
                     <span className='sprite-preview'>
@@ -32,7 +33,7 @@ export default class EmojiPickerPreview extends React.PureComponent {
                             id='emojiPickerSpritePreview'
                             alt={'emoji category image'}
                             src={imgTrans}
-                            className={'emojisprite-preview emoji-category-' + emoji.category + '-' + emoji.batch + ' emoji-' + emoji.filename}
+                            className={'emojisprite-preview emoji-category-' + emoji.category + ' emoji-' + emoji.image}
                         />
                     </span>
                 );

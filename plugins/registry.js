@@ -2,6 +2,7 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
+
 import reducerRegistry from 'mattermost-redux/store/reducer_registry';
 
 import {
@@ -132,6 +133,42 @@ export default class PluginRegistry {
         return id;
     }
 
+    // Add a "call button"" next to the attach file button. If there are more than one button registered by any
+    // plugin, a dropdown menu is created to contain all the call plugin buttons.
+    // Accepts the following:
+    // - icon - React element to use as the button's icon
+    // - action - a function called when the button is clicked, passed the channel and channel member as arguments
+    // - dropdown_text - string or React element shown for the dropdown button description
+    // - tooltip_text - string shown for tooltip appear on hover
+    // Returns an unique identifier
+    // Minimum required version: 5.28
+    registerCallButtonAction(icon, action, dropdownText, tooltipText) {
+        const id = generateId();
+
+        const data = {
+            id,
+            pluginId: this.id,
+            icon: resolveReactElement(icon),
+            action,
+            dropdownText: resolveReactElement(dropdownText),
+            tooltipText,
+        };
+
+        store.dispatch({
+            type: ActionTypes.RECEIVED_PLUGIN_COMPONENT,
+            name: 'CallButton',
+            data,
+        });
+
+        store.dispatch({
+            type: ActionTypes.RECEIVED_PLUGIN_COMPONENT,
+            name: 'MobileChannelHeaderButton',
+            data,
+        });
+
+        return id;
+    }
+
     // Register a component to render a custom body for posts with a specific type.
     // Custom post types must be prefixed with 'custom_'.
     // Custom post types can also apply for ephemeral posts.
@@ -239,6 +276,30 @@ export default class PluginRegistry {
             data: {
                 id,
                 pluginId: this.id,
+                text: resolveReactElement(text),
+                action,
+            },
+        });
+
+        return id;
+    }
+
+    // Register a files dropdown list item by providing some text and an action function.
+    // Accepts the following:
+    // - match - A function  that receives the fileInfo and returns a boolean indicating if the plugin is able to process it.
+    // - text - A string or React element to display in the menu
+    // - action - A function that receives the fileInfo and is called when the menu items is clicked.
+    // Returns a unique identifier.
+    registerFileDropdownMenuAction(match, text, action) {
+        const id = generateId();
+
+        store.dispatch({
+            type: ActionTypes.RECEIVED_PLUGIN_COMPONENT,
+            name: 'FilesDropdown',
+            data: {
+                id,
+                pluginId: this.id,
+                match,
                 text: resolveReactElement(text),
                 action,
             },

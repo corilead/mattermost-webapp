@@ -5,6 +5,7 @@ import {createSelector} from 'reselect';
 
 import {getCustomEmojisByName} from 'mattermost-redux/selectors/entities/emojis';
 import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
+import {getConfig} from 'mattermost-redux/selectors/entities/general';
 
 import LocalStorageStore from 'stores/local_storage_store';
 
@@ -13,6 +14,7 @@ import {getItemFromStorage} from 'selectors/storage';
 import EmojiMap from 'utils/emoji_map';
 
 export const getEmojiMap = createSelector(
+    'getEmojiMap',
     getCustomEmojisByName,
     (customEmojisByName) => {
         return new EmojiMap(customEmojisByName);
@@ -22,6 +24,7 @@ export const getEmojiMap = createSelector(
 export const getShortcutReactToLastPostEmittedFrom = (state) => state.views.emoji.shortcutReactToLastPostEmittedFrom;
 
 export const getRecentEmojis = createSelector(
+    'getRecentEmojis',
     (state) => state.storage,
     getCurrentUserId,
     (storage, currentUserId) => {
@@ -35,3 +38,8 @@ export const getRecentEmojis = createSelector(
         return recentEmojis;
     },
 );
+
+export function isCustomEmojiEnabled(state) {
+    const config = getConfig(state);
+    return config && config.EnableCustomEmoji === 'true';
+}

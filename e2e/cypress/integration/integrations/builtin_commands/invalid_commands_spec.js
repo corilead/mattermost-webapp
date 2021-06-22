@@ -7,6 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod
 // Group: @integrations
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
@@ -74,7 +75,9 @@ describe('Invalid slash command', () => {
         });
 
         // # Type a incorrect slash command and press enter in RHS
-        cy.get('#reply_textbox', {timeout: TIMEOUTS.HALF_MIN}).should('be.visible').clear().type(`/${incorrectCommand1} {enter}`);
+        cy.get('#reply_textbox', {timeout: TIMEOUTS.HALF_MIN}).should('be.visible').
+            clear().type(`/${incorrectCommand1} `).wait(TIMEOUTS.ONE_SEC).
+            type('{enter}');
 
         // # Move the text search for error inside the RHS container only, so we are certain it is rendered below RHS textbox
         cy.get('#rhsContainer').within(() => {

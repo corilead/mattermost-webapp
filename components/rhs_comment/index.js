@@ -8,9 +8,9 @@ import {Posts} from 'mattermost-redux/constants';
 import {isChannelReadOnlyById} from 'mattermost-redux/selectors/entities/channels';
 import {getCurrentTeamId} from 'mattermost-redux/selectors/entities/teams';
 import {makeGetReactionsForPost, getPost} from 'mattermost-redux/selectors/entities/posts';
-import {makeGetDisplayName} from 'mattermost-redux/selectors/entities/users';
+import {getUser, makeGetDisplayName} from 'mattermost-redux/selectors/entities/users';
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
-import {get} from 'mattermost-redux/selectors/entities/preferences';
+import {get, isCollapsedThreadsEnabled} from 'mattermost-redux/selectors/entities/preferences';
 import {isSystemMessage} from 'mattermost-redux/utils/post_utils';
 
 import {markPostAsUnread, emitShortcutReactToLastPostFrom} from 'actions/post_actions.jsx';
@@ -57,6 +57,9 @@ function mapStateToProps(state, ownProps) {
     const channel = state.entities.channels.channels[ownProps.post.channel_id];
     const shortcutReactToLastPostEmittedFrom = getShortcutReactToLastPostEmittedFrom(state);
 
+    const user = getUser(state, ownProps.post.user_id);
+    const isBot = Boolean(user && user.is_bot);
+
     return {
         author: getDisplayName(state, ownProps.post.user_id),
         reactions: getReactionsForPost(state, ownProps.post.id),
@@ -72,6 +75,8 @@ function mapStateToProps(state, ownProps) {
         compactDisplay: get(state, Preferences.CATEGORY_DISPLAY_SETTINGS, Preferences.MESSAGE_DISPLAY, Preferences.MESSAGE_DISPLAY_DEFAULT) === Preferences.MESSAGE_DISPLAY_COMPACT,
         shortcutReactToLastPostEmittedFrom,
         emojiMap,
+        isBot,
+        collapsedThreadsEnabled: isCollapsedThreadsEnabled(state),
     };
 }
 
@@ -84,4 +89,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(RhsComment);
+export default connect(mapStateToProps, mapDispatchToProps)(RhsComment);

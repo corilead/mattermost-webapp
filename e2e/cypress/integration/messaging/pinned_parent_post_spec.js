@@ -7,6 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod
 // Group: @messaging
 
 describe('Messaging', () => {
@@ -37,7 +38,7 @@ describe('Messaging', () => {
         });
     });
 
-    it('M23346 - Pinned parent post: reply count remains in center channel and is correct', () => {
+    it('MM-T123 Pinned parent post: reply count remains in center channel and is correct', () => {
         // # Login as the other user
         cy.apiLogin(sender);
 
@@ -49,13 +50,13 @@ describe('Messaging', () => {
             cy.get(`#post_${postId}`).trigger('mouseover');
             cy.get(`#CENTER_commentIcon_${postId}`).click({force: true});
             for (let i = 0; i < 5; i++) {
-                cy.get('#reply_textbox').should('be.visible').type(`Hello to you too ${i}`);
+                cy.get('#reply_textbox').click().should('be.visible').type(`Hello to you too ${i}`);
                 cy.get('#addCommentButton').should('be.enabled').click();
             }
             cy.get('#rhsCloseButton').click();
 
             // # Pin the post to the channel
-            cy.getPostMenu(postId, 'Pin to Channel').click();
+            cy.uiClickPostDropdownMenu(postId, 'Pin to Channel');
 
             // # Find the 'Pinned' span in the post pre-header to verify that the post was actually pinned
             cy.get(`#post_${postId}`).findByText('Pinned').should('exist');

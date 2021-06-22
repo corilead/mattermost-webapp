@@ -19,7 +19,11 @@
     "noEmit": true,
     "experimentalDecorators": true,
     "jsx": "react",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+        "mattermost-redux/*": ["packages/mattermost-redux/src/*"],
+        "reselect": ["packages/reselect/src"],
+    }
   },
   "include": [
     "./**/*"
@@ -27,6 +31,8 @@
   "exclude": [
     "dist",
     "e2e",
-    "!node_modules/@types"
+    "!node_modules/@types",
+    "storybook-static",
+    "coverage"
   ]
 }

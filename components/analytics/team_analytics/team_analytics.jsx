@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedDate, FormattedMessage} from 'react-intl';
+
 import {General} from 'mattermost-redux/constants';
 
 import LoadingScreen from 'components/loading_screen';
@@ -183,6 +184,7 @@ export default class TeamAnalytics extends React.PureComponent {
                                 defaultMessage='Total Posts'
                             />
                         }
+                        id='totalPosts'
                         data={postCountsDay}
                         width={740}
                         height={225}
@@ -200,6 +202,7 @@ export default class TeamAnalytics extends React.PureComponent {
                                 defaultMessage='Active Users With Posts'
                             />
                         }
+                        id='activeUsersWithPosts'
                         data={userCountsWithPostsDay}
                         width={740}
                         height={225}
@@ -246,6 +249,7 @@ export default class TeamAnalytics extends React.PureComponent {
                     </div>
                     <div className='team-statistics__team-filter'>
                         <select
+                            data-testid='teamFilter'
                             className='form-control team-statistics__team-filter__dropdown'
                             onChange={this.handleTeamChange}
                             value={this.state.team.id}

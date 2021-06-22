@@ -7,6 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod
 // Group: @messaging
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
@@ -55,16 +56,13 @@ describe('Messaging', () => {
         cy.get('#rhsContainer').should('be.visible');
 
         // # Make a series of post so we are way past the first message in terms of scroll
-        cy.get('#reply_textbox').
-            clear().
-            invoke('val', MESSAGES.HUGE).
-            wait(TIMEOUTS.ONE_SEC).
-            type(' {backspace}{enter}');
-        cy.get('#reply_textbox').
-            clear().
-            invoke('val', MESSAGES.HUGE).
-            wait(TIMEOUTS.ONE_SEC).
-            type(' {backspace}{enter}');
+        Cypress._.times(2, () => {
+            cy.get('#reply_textbox').
+                clear().
+                invoke('val', MESSAGES.HUGE).
+                wait(TIMEOUTS.ONE_SEC).
+                type(' {backspace}{enter}');
+        });
 
         // # Enter @ to allow opening of autocomplete box
         cy.get('#reply_textbox', {timeout: TIMEOUTS.HALF_MIN}).should('be.visible').clear().type('@');
@@ -80,12 +78,12 @@ describe('Messaging', () => {
         cy.closeRHS();
     });
 
-    it('MM-T70 At-mention user autocomplete is legible when it overlaps with channel header when drafting a long message containing a file attachment', () => {
+    it('MM-T70_1 At-mention user autocomplete is legible when it overlaps with channel header when drafting a long message containing a file attachment', () => {
         // # Upload file, add message, add mention, verify no overlap
         uploadFileAndAddAutocompleteThenVerifyNoOverlap();
     });
 
-    it('MM-T70 At-mention user autocomplete is legible when it overlaps with channel header when drafting a long message containing a file attachment (1280x900 viewport)', () => {
+    it('MM-T70_2 At-mention user autocomplete is legible when it overlaps with channel header when drafting a long message containing a file attachment (1280x900 viewport)', () => {
         // # Set to different viewport
         cy.viewport(1280, 900);
 

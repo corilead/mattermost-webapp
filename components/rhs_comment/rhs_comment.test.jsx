@@ -12,6 +12,7 @@ import EmojiMap from 'utils/emoji_map';
 import PostFlagIcon from 'components/post_view/post_flag_icon';
 import PostPreHeader from 'components/post_view/post_pre_header';
 import {Locations} from 'utils/constants';
+import {isSystemMessage} from 'utils/post_utils';
 
 jest.mock('utils/post_utils.jsx', () => ({
     isEdited: jest.fn().mockReturnValue(true),
@@ -20,6 +21,8 @@ jest.mock('utils/post_utils.jsx', () => ({
 }));
 
 import {isMobile} from 'utils/utils';
+import UserProfile from '../user_profile';
+
 jest.mock('utils/utils', () => ({
     isMobile: jest.fn(),
 }));
@@ -51,6 +54,7 @@ describe('components/RhsComment', () => {
         reactions: {},
         isFlagged: true,
         isBusy: false,
+        isFocused: false,
         removePost: jest.fn(),
         previewCollapsed: '',
         previewEnabled: false,
@@ -67,6 +71,9 @@ describe('components/RhsComment', () => {
             markPostAsUnread: jest.fn(),
         },
         emojiMap: new EmojiMap(new Map()),
+        isBot: false,
+        collapsedThreadsEnabled: false,
+        isInViewport: jest.fn(),
     };
 
     test('should match snapshot', () => {
@@ -112,6 +119,28 @@ describe('components/RhsComment', () => {
         expect(wrapper).toMatchSnapshot();
     });
 
+    test('should match snapshot on CRT enabled', () => {
+        const wrapper = shallowWithIntl(
+            <RhsComment
+                {...baseProps}
+                collapsedThreadsEnabled={true}
+            />,
+        );
+
+        expect(wrapper).toMatchSnapshot();
+    });
+
+    test('should match snapshot when highlighted', () => {
+        const wrapper = shallowWithIntl(
+            <RhsComment
+                {...baseProps}
+                isFocused={true}
+            />,
+        );
+
+        expect(wrapper).toMatchSnapshot();
+    });
+
     test('should show pointer when alt is held down', () => {
         const wrapper = shallowWithIntl(
             <RhsComment {...baseProps}/>,
@@ -152,7 +181,7 @@ describe('components/RhsComment', () => {
 
         wrapper.simulate('click', {altKey: true});
 
-        expect(baseProps.actions.markPostAsUnread).toHaveBeenCalledWith(baseProps.post);
+        expect(baseProps.actions.markPostAsUnread).toHaveBeenCalledWith(baseProps.post, 'RHS_COMMENT');
     });
 
     test('should not call markPostAsUnread when post is alt+clicked on when channel is archived', () => {
@@ -198,5 +227,56 @@ describe('components/RhsComment', () => {
         expect(postPreHeader.prop('isFlagged')).toEqual(baseProps.isFlagged);
         expect(postPreHeader.prop('isPinned')).toEqual(baseProps.post.is_pinned);
         expect(postPreHeader.prop('channelId')).toEqual(baseProps.post.channel_id);
+    });
+
+    test('should pass props correctly to UserProfile when sender is Bot', () => {
+        isSystemMessage.mockImplementationOnce(() => true);
+
+        const props = {
+            ...baseProps,
+            isBot: true,
+        };
+
+        const wrapper = shallowWithIntl(
+            <RhsComment {...props}/>,
+        );
+
+        const userProfile = wrapper.find(UserProfile);
+        expect(userProfile).toHaveLength(1);
+        expect(userProfile.prop('overwriteName')).toBeUndefined();
+        expect(userProfile.prop('userId')).toEqual(props.post.user_id);
+
+        const visibleMessage = wrapper.find('span[className="post__visibility"]');
+        expect(visibleMessage).toHaveLength(1);
+        expect(visibleMessage.prop('children')).toBeTruthy();
+        expect(visibleMessage.prop('children').props).toBeTruthy();
+        expect(visibleMessage.prop('children').props.id).toEqual('post_info.message.visible');
+    });
+
+    test('should call scrollIntoHighlight when isFocused changes to true', () => {
+        const scrollIntoHighlight = jest.fn();
+        isSystemMessage.mockImplementationOnce(() => true);
+
+        const wrapper = shallowWithIntl(
+            <RhsComment {...baseProps}/>,
+        );
+
+        const instance = wrapper.instance();
+
+        instance.scrollIntoHighlight = scrollIntoHighlight;
+
+        expect(scrollIntoHighlight).not.toHaveBeenCalled();
+
+        wrapper.setProps({
+            isFocused: true,
+        });
+
+        expect(scrollIntoHighlight).toHaveBeenCalled();
+
+        wrapper.setProps({
+            isFocused: false,
+        });
+
+        expect(scrollIntoHighlight).toHaveBeenCalledTimes(1);
     });
 });

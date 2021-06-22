@@ -14,8 +14,9 @@ import LogList from './log_list';
 
 type Props = {
     logs: string[];
-    nextPage: () => void;
-    actions: {getLogs: (page?: number | undefined, perPage?: number | undefined) => ActionFunc};
+    actions: {
+        getLogs: (page?: number | undefined, perPage?: number | undefined) => ActionFunc;
+    };
 };
 
 type State = {
@@ -35,12 +36,12 @@ export default class Logs extends React.PureComponent<Props, State> {
     }
 
     componentDidMount() {
-        this.props.actions.getLogs(this.state.page, this.state.perPage);
+        this.reload();
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
         if (this.state.page !== prevState.page) {
-            this.props.actions.getLogs(this.state.page, this.state.perPage);
+            this.reload();
         }
     }
 
@@ -88,7 +89,7 @@ export default class Logs extends React.PureComponent<Props, State> {
                             <div className='banner__content'>
                                 <FormattedMessage
                                     id='admin.logs.bannerDesc'
-                                    defaultMessage='To look up users by User ID or Token ID, go to Reporting > Users and paste the ID into the search filter.'
+                                    defaultMessage='To look up users by User ID or Token ID, go to User Management > Users and paste the ID into the search filter.'
                                 />
                             </div>
                         </div>

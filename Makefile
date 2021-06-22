@@ -4,6 +4,7 @@ BUILD_SERVER_DIR = ../mattermost-server
 BUILD_WEBAPP_DIR = ../mattermost-webapp
 MM_UTILITIES_DIR = ../mattermost-utilities
 EMOJI_TOOLS_DIR = ./build/emoji
+export NODE_OPTIONS=--max-old-space-size=4096
 
 build-storybook: node_modules ## Build the storybook
 	@echo Building storybook
@@ -91,10 +92,7 @@ stop: ## Stops webpack
 ifeq ($(OS),Windows_NT)
 	wmic process where "Caption='node.exe' and CommandLine like '%webpack%'" call terminate
 else
-	@for PROCID in $$(ps -ef | grep "[n]ode.*[w]ebpack" | awk '{ print $$2 }'); do \
-		echo stopping webpack watch $$PROCID; \
-		kill $$PROCID; \
-	done
+	@pkill -f webpack || true
 endif
 
 restart: | stop run ## Restarts the app
@@ -152,9 +150,7 @@ clean-e2e:
 		echo "config-backup.json not found" && sed -i'' -e 's|"DataSource": ".*"|"DataSource": "mmuser:mostest@tcp(dockerhost:3306)/mattermost_test?charset=utf8mb4,utf8\u0026readTimeout=30s\u0026writeTimeout=30s"|g' config/config.json
 
 emojis: ## Creates emoji JSON, JSX and Go files and extracts emoji images from the system font
-	gem install bundler
-	bundle install --gemfile=$(EMOJI_TOOLS_DIR)/Gemfile
-	BUNDLE_GEMFILE=$(EMOJI_TOOLS_DIR)/Gemfile SERVER_DIR=$(BUILD_SERVER_DIR) bundle exec $(EMOJI_TOOLS_DIR)/make-emojis
+	SERVER_DIR=$(BUILD_SERVER_DIR) npm run make-emojis
 
 ## Help documentatin à la https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
