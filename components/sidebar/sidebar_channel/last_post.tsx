@@ -9,7 +9,7 @@ const LastPost: React.FunctionComponent<LastPostProps> = ({ isCurrentChannel, ch
 
     const getLastPost = useCallback(
         (channelId: string) => {
-            console.log('Get last post by channelId:', channelId)
+            // console.log('Get last post by channelId:', channelId)
         },
         [],
     )

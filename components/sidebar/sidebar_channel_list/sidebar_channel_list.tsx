@@ -2,22 +2,22 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import Scrollbars from 'react-custom-scrollbars';
-import {DragDropContext, Droppable, DropResult, DragStart, BeforeCapture} from 'react-beautiful-dnd';
-import {Spring, SpringSystem} from 'rebound';
+import { DragDropContext, Droppable, DropResult, DragStart, BeforeCapture } from 'react-beautiful-dnd';
+import { Spring, SpringSystem } from 'rebound';
 import classNames from 'classnames';
 
 import debounce from 'lodash/debounce';
 
-import {General} from 'mattermost-redux/constants';
-import {Channel} from 'mattermost-redux/types/channels';
-import {ChannelCategory} from 'mattermost-redux/types/channel_categories';
-import {Team} from 'mattermost-redux/types/teams';
+import { General } from 'mattermost-redux/constants';
+import { Channel } from 'mattermost-redux/types/channels';
+import { ChannelCategory } from 'mattermost-redux/types/channel_categories';
+import { Team } from 'mattermost-redux/types/teams';
 
-import {trackEvent} from 'actions/telemetry_actions';
-import {DraggingState} from 'types/store';
-import {Constants, DraggingStates, DraggingStateTypes} from 'utils/constants';
+import { trackEvent } from 'actions/telemetry_actions';
+import { DraggingState } from 'types/store';
+import { Constants, DraggingStates, DraggingStateTypes } from 'utils/constants';
 import * as Utils from 'utils/utils';
 import * as ChannelUtils from 'utils/channel_utils.jsx';
 
@@ -121,7 +121,7 @@ export default class SidebarChannelList extends React.PureComponent<Props, State
         this.animate = new SpringSystem();
         this.scrollAnimation = this.animate.createSpring();
         this.scrollAnimation.setOvershootClampingEnabled(true); // disables the spring action at the end of animation
-        this.scrollAnimation.addListener({onSpringUpdate: this.handleScrollAnimationUpdate});
+        this.scrollAnimation.addListener({ onSpringUpdate: this.handleScrollAnimationUpdate });
     }
 
     componentDidMount() {
@@ -398,13 +398,13 @@ export default class SidebarChannelList extends React.PureComponent<Props, State
     }
 
     onBeforeDragStart = () => {
-        this.props.actions.setDraggingState({state: DraggingStates.BEFORE});
+        this.props.actions.setDraggingState({ state: DraggingStates.BEFORE });
     }
 
     onDragStart = (initial: DragStart) => {
         this.props.onDragStart(initial);
 
-        this.props.actions.setDraggingState({state: DraggingStates.DURING});
+        this.props.actions.setDraggingState({ state: DraggingStates.DURING });
 
         // Re-enable scroll box resizing
         const droppable = [...document.querySelectorAll<HTMLDivElement>('[data-rbd-droppable-id*="droppable-categories"]')];
@@ -428,8 +428,8 @@ export default class SidebarChannelList extends React.PureComponent<Props, State
     }
 
     render() {
-        const {categories} = this.props;
-
+        const { categories } = this.props;
+        console.log(categories)
         let channelList: React.ReactNode;
         if (this.props.isUnreadFilterEnabled) {
             channelList = (
@@ -449,7 +449,8 @@ export default class SidebarChannelList extends React.PureComponent<Props, State
                 );
             }
 
-            const renderedCategories = categories.map(this.renderCategory);
+
+            const renderedCategories = categories.filter(c => ['direct_messages', 'favorites'].includes(c.type)).map(this.renderCategory);
 
             channelList = (
                 <>
@@ -501,7 +502,7 @@ export default class SidebarChannelList extends React.PureComponent<Props, State
 
             // NOTE: id attribute added to temporarily support the desktop app's at-mention DOM scraping of the old sidebar
             <>
-                <GlobalThreadsLink/>
+                <GlobalThreadsLink />
                 <div
                     id='sidebar-left'
                     role='application'
@@ -537,7 +538,7 @@ export default class SidebarChannelList extends React.PureComponent<Props, State
                         renderTrackVertical={renderTrackVertical}
                         renderView={renderView}
                         onScroll={this.onScroll}
-                        style={{position: 'absolute'}}
+                        style={{ position: 'absolute' }}
                     >
                         {channelList}
                     </Scrollbars>
