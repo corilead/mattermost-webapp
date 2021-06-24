@@ -2,18 +2,19 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {Draggable} from 'react-beautiful-dnd';
+import { Draggable } from 'react-beautiful-dnd';
 import classNames from 'classnames';
 
-import {Channel} from 'mattermost-redux/types/channels';
+import { Channel } from 'mattermost-redux/types/channels';
 
 import FormattedMarkdownMessage from 'components/formatted_markdown_message';
-import {DraggingState} from 'types/store';
-import Constants, {DraggingStates} from 'utils/constants';
+import { DraggingState } from 'types/store';
+import Constants, { DraggingStates } from 'utils/constants';
 
 import SidebarBaseChannel from './sidebar_base_channel';
 import SidebarDirectChannel from './sidebar_direct_channel';
 import SidebarGroupChannel from './sidebar_group_channel';
+import LastPost from './last_post';
 
 type Props = {
 
@@ -144,7 +145,7 @@ export default class SidebarChannel extends React.PureComponent<Props, State> {
             autoSortedCategoryIds,
         } = this.props;
 
-        let ChannelComponent: React.ComponentType<{channel: Channel; currentTeamName: string; isCollapsed: boolean}> = SidebarBaseChannel;
+        let ChannelComponent: React.ComponentType<{ channel: Channel; currentTeamName: string; isCollapsed: boolean }> = SidebarBaseChannel;
         if (channel.type === Constants.DM_CHANNEL) {
             ChannelComponent = SidebarDirectChannel;
         } else if (channel.type === Constants.GM_CHANNEL) {
@@ -152,11 +153,16 @@ export default class SidebarChannel extends React.PureComponent<Props, State> {
         }
 
         const component = (
-            <ChannelComponent
-                isCollapsed={this.isCollapsed(this.props)}
-                channel={channel}
-                currentTeamName={currentTeamName}
-            />
+            <>
+                <div style={{ width: '100%', flex: '1 1 100%', minWidth: '100%' }}>
+                    <ChannelComponent
+                        isCollapsed={this.isCollapsed(this.props)}
+                        channel={channel}
+                        currentTeamName={currentTeamName}
+                    />
+                </div>
+                <LastPost isCurrentChannel={isCurrentChannel} channelId={channel.id} />
+            </>
         );
 
         let wrappedComponent: React.ReactNode;
@@ -169,7 +175,7 @@ export default class SidebarChannel extends React.PureComponent<Props, State> {
                         <FormattedMarkdownMessage
                             id='sidebar_left.sidebar_channel.selectedCount'
                             defaultMessage='{count} selected'
-                            values={{count: multiSelectedChannelIds.length}}
+                            values={{ count: multiSelectedChannelIds.length }}
                         />
                     </div>
                 );
@@ -199,6 +205,7 @@ export default class SidebarChannel extends React.PureComponent<Props, State> {
                                 {...provided.dragHandleProps}
                                 role='listitem'
                                 tabIndex={-1}
+                                style={{ height: 64, flexWrap: 'wrap' }}
                             >
                                 {component}
                                 {selectedCount}
@@ -217,6 +224,7 @@ export default class SidebarChannel extends React.PureComponent<Props, State> {
                         active: isCurrentChannel,
                     })}
                     role='listitem'
+                    style={{ height: 64, flexWrap: 'wrap' }}
                 >
                     {component}
                 </li>
