@@ -67,7 +67,8 @@ class SwitchChannelSuggestion extends Suggestion {
 
     render() {
         const {item, isSelection, userImageUrl, status, userItem} = this.props;
-        const channel = item.channel;
+        const channel = item.channel; 
+        if(channel.type!=='D')return <></>
         const channelIsArchived = channel.delete_at && channel.delete_at !== 0;
 
         const member = this.props.channelMember;

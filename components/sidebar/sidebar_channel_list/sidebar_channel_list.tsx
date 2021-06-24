@@ -429,7 +429,6 @@ export default class SidebarChannelList extends React.PureComponent<Props, State
 
     render() {
         const { categories } = this.props;
-        console.log(categories)
         let channelList: React.ReactNode;
         if (this.props.isUnreadFilterEnabled) {
             channelList = (
