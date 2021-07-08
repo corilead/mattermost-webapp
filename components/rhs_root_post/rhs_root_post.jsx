@@ -356,6 +356,7 @@ class RhsRootPost extends React.PureComponent {
         if (!isPostDeleted && this.props.post.type !== Constants.PostTypes.FAKE_PARENT_DELETED) {
             dotMenuContainer = (
                 <div
+                    style={{display: 'none'}}
                     ref={this.dotMenuRef}
                     className='col post-menu'
                 >

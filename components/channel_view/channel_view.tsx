@@ -6,6 +6,7 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {Action, ActionFunc} from 'mattermost-redux/types/actions';
+import {UserProfile} from 'mattermost-redux/types/users';
 
 import deferComponentRender from 'components/deferComponentRender';
 import ChannelHeader from 'components/channel_header';
@@ -35,6 +36,7 @@ type Props = {
     channelIsArchived: boolean;
     viewArchivedChannels: boolean;
     isCloud: boolean;
+    dmUser: UserProfile;
     actions: {
         goToLastViewedChannel: () => Promise<{data: boolean}>;
         setShowNextStepsView: (show: boolean) => Action;
@@ -214,6 +216,23 @@ export default class ChannelView extends React.PureComponent<Props, State> {
                                 defaultMessage='Close Channel'
                             />
                         </button>
+                    </div>
+                </div>
+            );
+        } else if (!this.props.dmUser?.is_bot) {
+            createPost = (
+                <div
+                    className='post-create__container'
+                    id='post-create'
+                >
+                    <div
+                        id='channelArchivedMessage'
+                        className='channel-archived__message'
+                    >
+                        <FormattedMarkdownMessage
+                            id='nonBotChannelMessage'
+                            defaultMessage='It is **FORBIDDEN** to communicate with natural person users at will. Please click the **Preset Statement** button above the channel and select a predefined statement to reply.'
+                        />
                     </div>
                 </div>
             );

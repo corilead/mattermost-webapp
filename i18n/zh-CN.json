@@ -2297,6 +2297,7 @@
   "apps.suggestion.no_dynamic": "没有返回动态建议的数据",
   "apps.suggestion.no_suggestion": "没有匹配的建议。",
   "archivedChannelMessage": "您正在查看**已归档的频道**。新消息无法被发送。",
+  "nonBotChannelMessage": "**禁止**随意与自然人用户交流，请点击页面上方搜索按钮左侧的**预定义回复**按钮，选择一条预定义的语句进行回复。",
   "atmos/camo": "atmos/camo",
   "audit_table.accountActive": "帐户已激活",
   "audit_table.accountInactive": "帐号已停用",

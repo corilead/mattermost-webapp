@@ -252,6 +252,7 @@ export default class PostInfo extends React.PureComponent<Props, State> {
 
         return (
             <div
+                style={{display: 'none'}}
                 ref={this.dotMenuRef}
                 data-testid={`post-menu-${post.id}`}
                 className={'col post-menu'}

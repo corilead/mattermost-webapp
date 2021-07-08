@@ -534,6 +534,7 @@ class RhsComment extends React.PureComponent {
 
             options = (
                 <div
+                    style={{display: 'none'}}
                     ref={this.dotMenuRef}
                     className='col post-menu'
                 >

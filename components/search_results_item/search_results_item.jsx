@@ -319,7 +319,10 @@ class SearchResultsItem extends React.PureComponent {
             }
 
             rhsControls = (
-                <div className='col__controls post-menu'>
+                <div
+                    className='col__controls post-menu'
+                    style={{display: 'none'}}
+                >
                     <DotMenu
                         post={post}
                         location={Locations.SEARCH}
