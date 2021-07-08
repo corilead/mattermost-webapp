@@ -246,42 +246,46 @@ export default class LegacyTeamSidebar extends React.PureComponent<Props, State>
 
         const joinableTeams = [];
 
-        if (this.props.moreTeamsToJoin && !this.props.experimentalPrimaryTeam) {
-            joinableTeams.push(
-                <TeamButton
-                    btnClass='team-btn__add'
-                    key='more_teams'
-                    url='/select_team'
-                    tip={
-                        <FormattedMessage
-                            id='team_sidebar.join'
-                            defaultMessage='Other teams you can join'
-                        />
-                    }
-                    content={<i className='icon icon-plus'/>}
-                    switchTeam={this.props.actions.switchTeam}
-                />,
-            );
-        } else {
-            joinableTeams.push(
-                <SystemPermissionGate
-                    permissions={[Permissions.CREATE_TEAM]}
-                    key='more_teams'
-                >
+        const disbaled = true;
+
+        if (!disbaled) {
+            if (this.props.moreTeamsToJoin && !this.props.experimentalPrimaryTeam) {
+                joinableTeams.push(
                     <TeamButton
                         btnClass='team-btn__add'
-                        url='/create_team'
+                        key='more_teams'
+                        url='/select_team'
                         tip={
                             <FormattedMessage
-                                id='navbar_dropdown.create'
-                                defaultMessage='Create a Team'
+                                id='team_sidebar.join'
+                                defaultMessage='Other teams you can join'
                             />
                         }
                         content={<i className='icon icon-plus'/>}
                         switchTeam={this.props.actions.switchTeam}
-                    />
-                </SystemPermissionGate>,
-            );
+                    />,
+                );
+            } else {
+                joinableTeams.push(
+                    <SystemPermissionGate
+                        permissions={[Permissions.CREATE_TEAM]}
+                        key='more_teams'
+                    >
+                        <TeamButton
+                            btnClass='team-btn__add'
+                            url='/create_team'
+                            tip={
+                                <FormattedMessage
+                                    id='navbar_dropdown.create'
+                                    defaultMessage='Create a Team'
+                                />
+                            }
+                            content={<i className='icon icon-plus'/>}
+                            switchTeam={this.props.actions.switchTeam}
+                        />
+                    </SystemPermissionGate>,
+                );
+            }
         }
 
         plugins.push(
