@@ -346,6 +346,12 @@ class CreatePost extends React.PureComponent {
         if (useGroupMentions) {
             actions.getChannelMemberCountsByGroup(currentChannel.id, isTimezoneEnabled);
         }
+        window.addEventListener('SendPresetStatement', (event) => {
+            const post = {};
+            post.file_ids = [];
+            post.message = event.detail;
+            this.sendMessage(post);
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {

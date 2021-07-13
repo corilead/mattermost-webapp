@@ -221,20 +221,32 @@ export default class ChannelView extends React.PureComponent<Props, State> {
             );
         } else if (!this.props.dmUser?.is_bot) {
             createPost = (
-                <div
-                    className='post-create__container'
-                    id='post-create'
-                >
+                <>
                     <div
-                        id='channelArchivedMessage'
-                        className='channel-archived__message'
+                        className='post-create__container'
+                        id='post-create'
                     >
-                        <FormattedMarkdownMessage
-                            id='nonBotChannelMessage'
-                            defaultMessage='It is **FORBIDDEN** to communicate with natural person users at will. Please click the **Preset Statement** button above the channel and select a predefined statement to reply.'
-                        />
+                        <div
+                            id='channelArchivedMessage'
+                            className='channel-archived__message'
+                        >
+                            <FormattedMarkdownMessage
+                                id='nonBotChannelMessage'
+                                defaultMessage='It is **FORBIDDEN** to communicate with natural person users at will. Please click the **Preset Statement** button above the channel and select a predefined statement to reply.'
+                            />
+                        </div>
                     </div>
-                </div>
+                    {!this.props.channelRolesLoading && (
+                        <div
+                            className='post-create__container'
+                            id='post-create'
+                            style={{display: 'none'}}
+                        >
+                            <CreatePost
+                                getChannelView={this.getChannelView}
+                            />
+                        </div>)}
+                </>
             );
         } else if (!this.props.channelRolesLoading) {
             createPost = (
