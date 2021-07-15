@@ -103,7 +103,6 @@ export default class SidebarHeaderDropdownButton extends React.PureComponent {
 
             );
         }
-
         return (
             <div
                 className='SidebarHeaderDropdownButton'
@@ -123,7 +122,7 @@ export default class SidebarHeaderDropdownButton extends React.PureComponent {
                             id='headerUsername'
                             className='user__name'
                         >
-                            {'@' + this.props.currentUser.username}
+                            {`@${this.props.currentUser.first_name} ${this.props.currentUser.last_name}`}
                         </div>
                         <CustomStatusEmoji
                             showTooltip={true}
